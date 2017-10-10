@@ -27,6 +27,7 @@ server.get('/hello/:name', respond);
 
 
 server.get('/',  function(req, res, next) {
+    
   console.log(req.url);
   /*
   let firstDoc = new Answers({ 'label': 'mine', 'text':'mon first doc save'});
@@ -35,11 +36,13 @@ server.get('/',  function(req, res, next) {
       else console.log("first doc saved with success!");
       });
 */
-Themes.find(function (err, themes) {
-  if (err) return console.error(err);
-
-  res.send(themes);
-})
+    Themes.find(function (err, themes) {
+      if (err) return console.error(err);
+    
+    console.log(themes);
+    res.charSet('utf-8');
+      res.send(themes);
+    })
 
 
   next();
