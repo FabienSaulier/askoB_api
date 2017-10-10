@@ -1,0 +1,27 @@
+{
+  "name": "askob_api",
+  "version": "1.0.0",
+  "description": "api test asko",
+  "main": "app.js",
+  "dependencies": {
+    "mongodb": "^2.2.31",
+    "mongoose": "^4.12.1",
+    "mongoose-string-query": "^0.2.5",
+    "mongoose-timestamp": "^0.6.0",
+    "restify": "^6.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "mongodburl=ds113435.mlab.com:13435/heroku_wtzqjsm9 mongodbuser=admin mongodbpassword=admin node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FabienSaulier/askoB_api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FabienSaulier/askoB_api/issues"
+  },
+  "homepage": "https://github.com/FabienSaulier/askoB_api#readme"
+}
