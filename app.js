@@ -1,10 +1,10 @@
 var restify = require('restify');
 
+
 const config = require('./config');
 
 
 const mongoose = require('mongoose');
-console.log();
 mongoose.connect('mongodb://'+process.env.mongodbuser+':'+process.env.mongodbpassword+'@'+process.env.mongodburl, {useMongoClient: true});
 
 var db = mongoose.connection;
@@ -23,33 +23,31 @@ function respond(req, res, next) {
 }
 
 var server = restify.createServer();
-server.get('/hello/:name', respond);
+server.use(restify.plugins.bodyParser());
 
-
-server.get('/',  function(req, res, next) {
-    
-  console.log(req.url);
-  /*
-  let firstDoc = new Answers({ 'label': 'mine', 'text':'mon first doc save'});
-  firstDoc.save(function (err){
-      if(err) console.log(err);
-      else console.log("first doc saved with success!");
-      });
-*/
-    Themes.find(function (err, themes) {
-      if (err) return console.error(err);
-    
-    console.log(themes);
-    res.charSet('utf-8');
-      res.send(themes);
-    })
-
-
-  next();
-  //return next();
+server.get('/',  function(req, res, next) {    
+    console.log(req.url);
+    res.send(200);
+    next();
 });
 
-server.head('/hello/:name', respond);
+server.get('/themes',  function(req, res, next) {    
+    console.log(req.url);
+    Themes.find(function (err, themes) {
+        if (err) return console.error(err);
+        console.log(themes);
+        res.charSet('utf-8');
+        res.send(themes);
+    })
+    next();
+});
+
+
+server.post('/answer',  function(req, res, next) {    
+    console.log(req.body);
+    res.send(200);
+    next();
+});
 
 
 
