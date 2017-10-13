@@ -2,7 +2,7 @@ var restify = require('restify');
 
 
 const config = require('./config');
-
+var httpRequest = require('request');
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://'+process.env.mongodbuser+':'+process.env.mongodbpassword+'@'+process.env.mongodburl, {useMongoClient: true});
@@ -45,7 +45,23 @@ server.get('/themes',  function(req, res, next) {
 
 server.post('/answer',  function(req, res, next) {    
     console.log(req.body);
+    
     res.send(200);
+    
+    
+    /* APPEL A FACEBOOk ! */
+        httpRequest.post(
+        {
+            'uri': 'https://askotest.herokuapp.com/answer',
+            'json': result
+        }, 
+        function (error, response, body) {
+            console.log('error:', error); // Print the error if one occurred
+            console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+            console.log('body:', body); // Print the HTML for the Google homepage.
+    });
+    
+    
     next();
 });
 
