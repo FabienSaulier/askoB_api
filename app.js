@@ -52,7 +52,7 @@ server.post('/answer',  function(req, res, next) {
     /* APPEL A FACEBOOk ! */
         httpRequest.post(
         {
-            'uri': 'hhttps://graph.facebook.com/v2.6/me/messages?access_token=EAAHkcVMf1PgBAIJXgBFIOsGtcZA9ZBf0s3WXVjRIZB70Re1ZBarcleBHpyBS2mtCOmU0NVQ4gZCqgKBzFD8iRcpkWAPyLHpZBEGqDCoPNG2gevusPBc2ho1dlqsQnmMqAeh1lBA4ZAU1wbWlrtQxlZCaHtXrGHMbkhoBZA6DLjNLoCQZDZD',
+            'uri': 'https://graph.facebook.com/v2.6/me/messages?access_token=EAAHkcVMf1PgBAIJXgBFIOsGtcZA9ZBf0s3WXVjRIZB70Re1ZBarcleBHpyBS2mtCOmU0NVQ4gZCqgKBzFD8iRcpkWAPyLHpZBEGqDCoPNG2gevusPBc2ho1dlqsQnmMqAeh1lBA4ZAU1wbWlrtQxlZCaHtXrGHMbkhoBZA6DLjNLoCQZDZD',
             'json': '{ "recipient":{ "id":"1564151846940529"  }, "message":{ "text":"hello,sdfdsfdsfsdf world!"}}'
         }, 
         function (error, response, body) {
