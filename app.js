@@ -53,6 +53,7 @@ server.post('/webhook', function (req, res) {
 
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
+        console.log("foreach event: ", event.message);
         if (event.message) {
           receivedMessage(event);
         } else {
@@ -73,7 +74,7 @@ function receivedMessage(event) {
   const recipientID = event.recipient.id;
   const timeOfMessage = event.timestamp;
   const message = event.message;
-  console.log(JSON.stringify(message));
+  console.log("receivedMessage ::",JSON.stringify(message));
   const messageId = message.mid;
   const messageText = message.text;
   const messageAttachments = message.attachments;
