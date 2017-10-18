@@ -1,7 +1,10 @@
 var restify = require('restify');
 
-require('dotenv').config();
 const config = require('./config');
+
+if(config.ENV = 'development'){
+  require('dotenv').config();
+}
 var httpRequest = require('request');
 
 const mongoose = require('mongoose');
