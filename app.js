@@ -74,7 +74,7 @@ server.post('/webhook', function (req, res) {
 
 function receivedMessage(event) {
   const senderID = event.sender.id;
-  sendTypingOn(senderID;
+  sendTypingOn(senderID);
   const recipientID = event.recipient.id;
   const timeOfMessage = event.timestamp;
   const message = event.message;
