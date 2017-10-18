@@ -59,7 +59,8 @@ server.get('/webhook', function(req, res, next) {
   //  res.status(200).send(req.query['hub.challenge']);
   } else {
     console.error("Failed validation. Make sure the validation tokens match.");
-   // res.sendStatus(403);          
+   // res.sendStatus(403); 
+   res.send(403);
   }  
 });
 
@@ -92,7 +93,7 @@ server.post('/webhook', function (req, res) {
     // You must send back a 200, within 20 seconds, to let us know
     // you've successfully received the callback. Otherwise, the request
     // will time out and we will keep trying to resend.
-    res.sendRaw(200);
+    res.send(200);
   }
 });
 
