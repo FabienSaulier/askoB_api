@@ -96,12 +96,14 @@ function receivedMessage(event) {
     });
 
   } else if (messageText) {
+    console.log("call recast");
 
     let requesRecast = clientRecast.request;
     requesRecast.analyseText(messageText)
       .then(function(res) {
+         console.log(res);
         var intent = res.intent()
-        console.log(intent);
+        console.log("INTENT :",intent);
         if(intent && intent.slug == 'greetings')
           sendHomeAnswer(senderID);
         else
