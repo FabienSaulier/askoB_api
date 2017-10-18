@@ -1,74 +1,47 @@
 var restify = require('restify');
 
-
+require('dotenv').config();
 const config = require('./config');
 var httpRequest = require('request');
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://'+process.env.mongodbuser+':'+process.env.mongodbpassword+'@'+process.env.mongodburl, {useMongoClient: true});
-
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
     console.log("connected to db");
 });
 
+
+
+let recastai = require('recastai').default;
+let clientRecast = new recastai(process.env.RECAST_DEV_ACCESS_TOKEN);
+
+
 const Answers = require('./answer');
 const Themes = require('./themes');
 
-
-function respond(req, res, next) {
-  res.send('hello ' + req.params.name);
-  next();
-}
 
 var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 server.use(restify.plugins.queryParser());
 
 
-server.get('/',  function(req, res, next) {    
-    console.log(req.url);
-    res.send(200);
-    next();
-});
-
-server.get('/themes',  function(req, res, next) {    
-    console.log(req.url);
-    Themes.find(function (err, themes) {
-        if (err) return console.error(err);
-        console.log(themes);
-        res.charSet('utf-8');
-        res.send(themes);
-    })
-    next();
-});
-
 server.get('/webhook', function(req, res, next) {
-        
-    console.log("webhook");
-    console.log(req.query['hub.challenge']);
-    
-  if (req.query['hub.mode'] === 'subscribe' &&
-      req.query['hub.verify_token'] === "123456789") {
+
+  if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === "123456789") {
     console.log("Validating webhook");
-    
     res.sendRaw(200, req.query['hub.challenge']);
-  //  httpRequest
-    
-  //  res.status(200).send(req.query['hub.challenge']);
+
   } else {
-    console.error("Failed validation. Make sure the validation tokens match.");
-   // res.sendStatus(403); 
-   res.send(403);
-  }  
+    console.error("Failed webhook validation. Make sure the validation tokens match.");
+    res.send(403);
+  }
 });
 
 
 server.post('/webhook', function (req, res) {
   var data = req.body;
-  
-  console.log(data);
 
   // Make sure this is a page subscription
   if (data.object === 'page') {
@@ -83,97 +56,165 @@ server.post('/webhook', function (req, res) {
         if (event.message) {
           receivedMessage(event);
         } else {
-          console.log("Webhook received unknown event: ", event);
+          //    console.log("Webhook received unknown event: ", event);
+          console.log("Webhook received unknown event... todo: log and analyze ");
         }
       });
     });
 
-    // Assume all went well.
-    //
-    // You must send back a 200, within 20 seconds, to let us know
-    // you've successfully received the callback. Otherwise, the request
-    // will time out and we will keep trying to resend.
+    // Assume all went well. Send 200, otherwise, the request will time out and will be resent
     res.send(200);
   }
 });
 
 
 function receivedMessage(event) {
-  // Putting a stub for now, we'll expand it in the following steps
-  console.log("Message data: ", event.message);
+  const senderID = event.sender.id;
+  const recipientID = event.recipient.id;
+  const timeOfMessage = event.timestamp;
+  const message = event.message;
+  console.log(JSON.stringify(message));
+  const messageId = message.mid;
+  const messageText = message.text;
+  const messageAttachments = message.attachments;
+
+  if(message.quick_reply){
+    console.log("DANS LE IF QUICK REPLY");
+    const payload = message.quick_reply.payload;
+    const query = Answers.findOne({'code':payload});
+
+    query.then(
+      function(answer){
+        if(!answer){
+            sendDefaultAnswer(senderID);
+        } else{
+          sendAnswer(senderID, answer);
+        }
+    },
+      function(error){
+        console.log("ERROR :",error);
+    });
+
+  } else if (messageText) {
+
+    let requesRecast = clientRecast.request;
+    requesRecast.analyseText(messageText)
+      .then(function(res) {
+        var intent = res.intent()
+        console.log(intent);
+        if(intent && intent.slug == 'greetings')
+          sendHomeAnswer(senderID);
+        else
+          sendDefaultAnswer(senderID);
+      })
+
+  } else if (messageAttachments) {
+    sendTextMessage(senderID, "Message with attachment received");
+  }
 }
 
 
-server.post('/answer',  function(req, res, next) {
-    
-    console.log("body: ",req.body);
-    
-    res.send(200);
-    
+function sendAnswer(recipientId, answer) {
 
-    
-    /* APPEL A FACEBOOk ! */
-        httpRequest.post(
-        {
-            url: 'https://graph.facebook.com/v2.6/me/messages?access_token=EAAHkcVMf1PgBAIJXgBFIOsGtcZA9ZBf0s3WXVjRIZB70Re1ZBarcleBHpyBS2mtCOmU0NVQ4gZCqgKBzFD8iRcpkWAPyLHpZBEGqDCoPNG2gevusPBc2ho1dlqsQnmMqAeh1lBA4ZAU1wbWlrtQxlZCaHtXrGHMbkhoBZA6DLjNLoCQZDZD',
-            json: true,
-            body:toto
-        }, 
-        function (error, response, body) {
-            console.log('error:', error); // Print the error if one occurred
-            console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-            console.log('body:', body); // Print the HTML for the Google homepage.
-    });
-    
-    
-    next();
-});
-
-
-server.get('/answer/:code_answer', function(req, res, next) {
-    
-    
-    const query = Answers.findOne({'code':req.params.code_answer});
-    
-    query.then(function(answer){
-        
-        
-        var fbResponse = {
-            "recipient":{ "id":"1564151846940529"  }, 
-            "message":{
-                "text":answer.text,
-                "quick_replies":[
-                  {
-                    "content_type":"text",
-                    "title":"Red",
-                    "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
-                  }
-                ]},
-        };
-        
-
-        httpRequest.post(
-        {
-            url: 'https://graph.facebook.com/v2.6/me/messages?access_token=EAAHkcVMf1PgBAIJXgBFIOsGtcZA9ZBf0s3WXVjRIZB70Re1ZBarcleBHpyBS2mtCOmU0NVQ4gZCqgKBzFD8iRcpkWAPyLHpZBEGqDCoPNG2gevusPBc2ho1dlqsQnmMqAeh1lBA4ZAU1wbWlrtQxlZCaHtXrGHMbkhoBZA6DLjNLoCQZDZD',
-            json: true,
-            body:fbResponse
-        }, 
-        function (error, response, body) {
-            console.log('error:', error); // Print the error if one occurred
-            console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-            console.log('body:', body); // Print the HTML for the Google homepage.
-        });
-        
-
-        
+  let quick_replies = [];
+  answer.sons.forEach(function(son){
+    quick_replies.push({
+      "content_type":"text",
+      "title": son.name,
+      "payload": son.code
     })
-    
-    console.log(req.params);
-    console.log("coucou, code is : ",req.params.code_answer);
-    res.send(200);
-    
-    next();
-});
+  })
+
+  if(quick_replies.length === 0){
+    quick_replies.push({
+      "content_type":"text",
+      "title": '🏠',
+      "payload": 'INDEX'
+    })
+  }
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: answer.text,
+      quick_replies:quick_replies
+    }
+  };
+  callSendAPI(messageData);
+}
+
+
+function sendGenericMessage(recipientId, messageText) {
+  // a voir
+}
+
+
+function sendTextMessage(recipientId, messageText) {
+  console.log("sendTextMessagee");
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: messageText,
+    }
+  };
+  callSendAPI(messageData);
+}
+
+
+function callSendAPI(messageData) {
+  console.log(messageData);
+  httpRequest({
+    uri: 'https://graph.facebook.com/v2.6/me/messages?access_token='+config.ACCESS_TOKEN,
+    method: 'POST',
+    json: messageData
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      //var recipientId = body.recipient_id;
+      //var messageId = body.message_id;
+      //console.log("Successfully sent generic message with id %s to recipient %s", messageId, recipientId);
+    } else {
+      console.error("Unable to send message.");
+      console.error(response);
+      console.error(error);
+    }
+  });
+}
+
+function sendHomeAnswer(senderID){
+  const code = 'INDEX';
+
+//TODO factoriser, au retour de la promise de find, envoyer la réponse.
+//  findAnswer(code);
+
+  const query = Answers.findOne({'code':code});
+
+  query.then(
+    function(defaultAnswer){
+      sendAnswer(senderID, defaultAnswer);
+    },
+    function(error){
+      console.log("ERROR :",error);
+    });
+}
+
+function sendDefaultAnswer(senderID){
+  const code = 'LOST';
+  const query = Answers.findOne({'code':code});
+
+  query.then(
+    function(defaultAnswer){
+      sendAnswer(senderID, defaultAnswer);
+    },
+    function(error){
+      console.log("ERROR :",error);
+    });
+}
+
 
 
 server.listen(process.env.PORT || 3000, function() {
