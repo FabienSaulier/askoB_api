@@ -143,6 +143,7 @@ function sendAnswer(recipientId, answer) {
     recipient: {
       id: recipientId
     },
+    sender_action:"typing_on",
     message: {
       text: answer.text,
       quick_replies:quick_replies
@@ -163,6 +164,7 @@ function sendTextMessage(recipientId, messageText) {
     recipient: {
       id: recipientId
     },
+    sender_action:"typing_on",
     message: {
       text: messageText,
     }
