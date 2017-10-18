@@ -54,8 +54,7 @@ server.get('/webhook', function(req, res, next) {
       req.query['hub.verify_token'] === "123456789") {
     console.log("Validating webhook");
     
- //   res.status(200);
-    res.send(200, req.query['hub.challenge']);
+    res.sendRaw(200, req.query['hub.challenge']);
   //  httpRequest
     
   //  res.status(200).send(req.query['hub.challenge']);
