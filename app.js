@@ -44,10 +44,10 @@ server.get('/themes',  function(req, res, next) {
     next();
 });
 
-server.get('/webhook', function(req, res) {
+server.get('/webhook', function(req, res, next) {
     
-    console.log(req);
-    
+    console.log("webhook");
+    /*
   if (req.query['hub.mode'] === 'subscribe' &&
       req.query['hub.verify_token'] === "123456789") {
     console.log("Validating webhook");
@@ -55,9 +55,14 @@ server.get('/webhook', function(req, res) {
   } else {
     console.error("Failed validation. Make sure the validation tokens match.");
     res.sendStatus(403);          
-  }  
+  }  */
 });
 
+server.post('/webhook', function(req, res, next) {
+    
+    console.log(" post webhook");
+
+});
 
 server.post('/answer',  function(req, res, next) {
     
