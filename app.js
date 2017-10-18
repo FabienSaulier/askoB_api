@@ -56,9 +56,6 @@ server.post('/webhook', function (req, res) {
 
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
-
-        sendTypingOn(event.sender.id);
-
         console.log("foreach event: ", event.message);
         if (event.message) {
           receivedMessage(event);
@@ -77,6 +74,7 @@ server.post('/webhook', function (req, res) {
 
 function receivedMessage(event) {
   const senderID = event.sender.id;
+  sendTypingOn(senderID;
   const recipientID = event.recipient.id;
   const timeOfMessage = event.timestamp;
   const message = event.message;
