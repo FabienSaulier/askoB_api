@@ -56,6 +56,9 @@ server.post('/webhook', function (req, res) {
 
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
+
+        sendTypingOn(event.sender.id);
+
         console.log("foreach event: ", event.message);
         if (event.message) {
           receivedMessage(event);
@@ -143,7 +146,6 @@ function sendAnswer(recipientId, answer) {
     recipient: {
       id: recipientId
     },
-    sender_action:"typing_on",
     message: {
       text: answer.text,
       quick_replies:quick_replies
@@ -164,7 +166,6 @@ function sendTextMessage(recipientId, messageText) {
     recipient: {
       id: recipientId
     },
-    sender_action:"typing_on",
     message: {
       text: messageText,
     }
@@ -179,6 +180,32 @@ function callSendAPI(messageData) {
     uri: 'https://graph.facebook.com/v2.6/me/messages?access_token='+config.ACCESS_TOKEN,
     method: 'POST',
     json: messageData
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      //var recipientId = body.recipient_id;
+      //var messageId = body.message_id;
+      //console.log("Successfully sent generic message with id %s to recipient %s", messageId, recipientId);
+    } else {
+      console.error("Unable to send message.");
+      console.error(response);
+      console.error(error);
+    }
+  });
+}
+
+function sendTypingOn(recipientId) {
+  var data = {
+    recipient: {
+      id: recipientId
+    },
+    sender_action:"typing_on"
+  };
+
+  httpRequest({
+    uri: 'https://graph.facebook.com/v2.6/me/messages?access_token='+config.ACCESS_TOKEN,
+    method: 'POST',
+    json: data
 
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
