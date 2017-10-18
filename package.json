@@ -11,7 +11,9 @@
     "request": "^2.83.0",
     "restify": "^6.0.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+        "nodemon": "^1.11.0"
+  },
   "scripts": {
     "start": "mongodburl=ds113435.mlab.com:13435/heroku_wtzqjsm9 mongodbuser=admin mongodbpassword=admin node app.js"
   },
