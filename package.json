@@ -4,14 +4,14 @@
   "description": "api test asko",
   "main": "app.js",
   "dependencies": {
+    "dotenv": "^4.0.0",
     "mongodb": "^2.2.31",
     "mongoose": "^4.12.1",
     "mongoose-string-query": "^0.2.5",
     "mongoose-timestamp": "^0.6.0",
     "recastai": "^3.5.0",
     "request": "^2.83.0",
-    "restify": "^6.0.1",
-    "dotenv": "^4.0.0"
+    "restify": "^6.2.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

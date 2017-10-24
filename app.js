@@ -28,6 +28,13 @@ const Themes = require('./themes');
 var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 server.use(restify.plugins.queryParser());
+server.use(
+  function crossOrigin(req,res,next){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    return next();
+  }
+);
 
 
 server.get('/webhook', function(req, res, next) {
@@ -40,6 +47,24 @@ server.get('/webhook', function(req, res, next) {
     console.error("Failed webhook validation. Make sure the validation tokens match.");
     res.send(403);
   }
+});
+
+// a mettre ailleur.
+server.get('/lapin', function(req, res, next) {
+  const code = 'INDEX';
+
+//TODO factoriser
+  const query = Answers.findOne({'code':code});
+  query.then(
+    function(result){
+      console.log(result);
+      res.send(200, result);
+    },
+    function(error){
+      console.log("ERROR :",error);
+    });
+
+
 });
 
 
