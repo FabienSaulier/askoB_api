@@ -25,17 +25,40 @@ const Answers = require('./answer');
 const Themes = require('./themes');
 
 
+
 var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 server.use(restify.plugins.queryParser());
+
+/////   CORS  /////////////
+const corsMiddleware = require('restify-cors-middleware');
+const cors = corsMiddleware({
+  preflightMaxAge: 5, //Optional
+  origins: ['*'],
+  allowHeaders: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  exposeHeaders: ['Content-Type']
+})
+
+server.pre(cors.preflight)
+server.use(cors.actual)
+
+/////   END  CORS  /////////////
+
+
+/*
 server.use(
   function crossOrigin(req,res,next){
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+
+
+    res.header("Access-Control-Allow-Methods", "POST");
+
+    res.header("Access-Control-Allow-Headers", "Content_Type");
+//    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     return next();
   }
 );
-
+*/
 
 server.get('/webhook', function(req, res, next) {
 
@@ -49,23 +72,68 @@ server.get('/webhook', function(req, res, next) {
   }
 });
 
-// a mettre ailleur.
+
+////////////////////////////////////////////////////////////////////////////
+////
+////             A sortir, mieux orga
+////
+////////////////////////////////////////////////////////////////////////////
 server.get('/lapin', function(req, res, next) {
   const code = 'INDEX';
 
 //TODO factoriser
-  const query = Answers.findOne({'code':code});
-  query.then(
-    function(result){
-      console.log(result);
-      res.send(200, result);
-    },
-    function(error){
-      console.log("ERROR :",error);
-    });
-
-
+  Answers.findOne({'code':code})
+    .then(
+      function(result){
+        console.log(result);
+        res.send(200, result);
+      },
+      function(error){
+        console.log("ERROR :",error);
+      }
+    );
 });
+
+
+server.get('/lapin/answer/:code', function(req, res, next) {
+  const code = req.params.code;
+  Answers.findOne({'code':code})
+    .then(
+      function(result){
+        console.log(result);
+        res.send(200, result);
+      },
+      function(error){
+        console.log("ERROR :",error);
+      }
+    );
+});
+
+
+// Update and Create an asnwer.
+server.put('/lapin/answer/', function(req, res, next){
+  const inputAnswer = req.body;
+  Answers.update({_id:inputAnswer._id}, inputAnswer, {upsert:true})
+  .then(function(result){
+    if(result.ok == 1){
+      res.send(200);
+    }else{
+      console.log("ERROR");
+      console.log(result);
+      /*
+      res.send(500);
+      */
+    }
+  })
+});
+
+
+
+////////////////////////////////////////////////////////////////////////////
+////
+////            FIN
+////
+////////////////////////////////////////////////////////////////////////////
 
 
 server.post('/webhook', function (req, res) {
