@@ -16,7 +16,6 @@ db.once('open', function() {
 });
 
 
-
 let recastai = require('recastai').default;
 let clientRecast = new recastai(process.env.RECAST_DEV_ACCESS_TOKEN);
 
@@ -85,7 +84,6 @@ server.get('/lapin', function(req, res, next) {
   Answers.findOne({'code':code})
     .then(
       function(result){
-        console.log(result);
         res.send(200, result);
       },
       function(error){
@@ -100,7 +98,6 @@ server.get('/lapin/answer/:code', function(req, res, next) {
   Answers.findOne({'code':code})
     .then(
       function(result){
-        console.log(result);
         res.send(200, result);
       },
       function(error){
@@ -109,22 +106,43 @@ server.get('/lapin/answer/:code', function(req, res, next) {
     );
 });
 
+server.del('/lapin/answer/:code', function(req, res, next) {
+  const code = req.params.code;
+  console.log("to delete ", code);
+  Answers.remove({ code: code}, function (err) {
+    if (err) return console.log(err);
+  });
+});
 
-// Update and Create an asnwer.
+const flattenMongooseValidationError = require('flatten-mongoose-validation-error');
+
+// Update and Create an asnwer. TODO a factoriser
 server.put('/lapin/answer/', function(req, res, next){
   const inputAnswer = req.body;
-  Answers.update({_id:inputAnswer._id}, inputAnswer, {upsert:true})
-  .then(function(result){
-    if(result.ok == 1){
-      res.send(200);
-    }else{
-      console.log("ERROR");
-      console.log(result);
-      /*
-      res.send(500);
-      */
-    }
-  })
+console.log("put ", inputAnswer);
+  if(inputAnswer._id){
+    Answers.update({_id:inputAnswer._id}, inputAnswer, {runValidators: true}, function(err, answer){
+      if(err){
+        const e = flattenMongooseValidationError(err, ' - ');
+        res.send(400, {'errorMsg': e});
+        return next();
+      } else{
+        res.send(200);
+      }
+    })
+  }else{
+    Answers.create(inputAnswer, function(err){
+      console.log( "created");
+      if(err){
+        const e = flattenMongooseValidationError(err, ' - ');
+        res.send(400, {'errorMsg': e});
+        return next();
+      }else{
+        res.send(200);
+        return next();
+      }
+    })
+  }
 });
 
 

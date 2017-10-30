@@ -5,6 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "dotenv": "^4.0.0",
+    "flatten-mongoose-validation-error": "^1.0.1",
     "mongodb": "^2.2.31",
     "mongoose": "^4.12.1",
     "mongoose-string-query": "^0.2.5",
