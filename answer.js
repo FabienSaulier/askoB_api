@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const mongooseStringQuery = require('mongoose-string-query');
 const timestamps = require('mongoose-timestamp');
 
-/*
+
 const SonSchema = new mongoose.Schema(
 	{
 		name: {
@@ -18,7 +18,7 @@ const SonSchema = new mongoose.Schema(
 		}
 	}
 );
-*/
+
 
 const AnswerSchema = new mongoose.Schema(
 	{
@@ -38,8 +38,8 @@ const AnswerSchema = new mongoose.Schema(
 		deleted:{
 			type: Boolean
 		},
-	  sonsCode: {
-			type: [String]
+	  sons: {
+			type: [SonSchema]
 		}
 	}
 );

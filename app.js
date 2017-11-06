@@ -119,7 +119,6 @@ const flattenMongooseValidationError = require('flatten-mongoose-validation-erro
 // Update and Create an asnwer. TODO a factoriser
 server.put('/lapin/answer/', function(req, res, next){
   const inputAnswer = req.body;
-console.log("put ", inputAnswer);
   if(inputAnswer._id){
     Answers.update({_id:inputAnswer._id}, inputAnswer, {runValidators: true}, function(err, answer){
       if(err){
@@ -132,7 +131,6 @@ console.log("put ", inputAnswer);
     })
   }else{
     Answers.create(inputAnswer, function(err){
-      console.log( "created");
       if(err){
         const e = flattenMongooseValidationError(err, ' - ');
         res.send(400, {'errorMsg': e});
@@ -156,6 +154,7 @@ console.log("put ", inputAnswer);
 
 server.post('/webhook', function (req, res) {
   var data = req.body;
+  console.log("post /webhook");
 
   // Make sure this is a page subscription
   if (data.object === 'page') {
@@ -164,6 +163,8 @@ server.post('/webhook', function (req, res) {
     data.entry.forEach(function(entry) {
       var pageID = entry.id;
       var timeOfEvent = entry.time;
+
+      console.log("foreach entry", entry);
 
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
@@ -175,6 +176,8 @@ server.post('/webhook', function (req, res) {
           console.log("Webhook received unknown event... todo: log and analyze ");
         }
       });
+
+
     });
 
     // Assume all went well. Send 200, otherwise, the request will time out and will be resent
@@ -217,7 +220,6 @@ function receivedMessage(event) {
     let requesRecast = clientRecast.request;
     requesRecast.analyseText(messageText)
       .then(function(res) {
-         console.log(res);
         var intent = res.intent()
         console.log("INTENT :",intent);
         if(intent && intent.slug == 'greetings')
@@ -234,14 +236,32 @@ function receivedMessage(event) {
 
 function sendAnswer(recipientId, answer) {
 
+console.log(answer);
   let quick_replies = [];
-  answer.sons.forEach(function(son){
-    quick_replies.push({
-      "content_type":"text",
-      "title": son.name,
-      "payload": son.code
+
+  // TODO quick fix cause we change bdd: sons: [{code,name},..] => sonsCode: [code]
+  if(answer.sons){
+    answer.sons.forEach(function(son){
+      quick_replies.push({
+        "content_type":"text",
+        "title": son.name,
+        "payload": son.code
+      })
     })
-  })
+  } else{
+    answer.sonsCode.forEach(function(sonCode){
+      console.log("son: ",sonCode);
+      quick_replies.push({
+        "content_type":"text",
+        "title": sonCode,
+        "payload": sonCode
+      })
+    })
+  }
+
+
+
+  // END TODO Quickfix
 
   if(quick_replies.length === 0){
     quick_replies.push({
@@ -260,6 +280,7 @@ function sendAnswer(recipientId, answer) {
       quick_replies:quick_replies
     }
   };
+  console.log(messageData);
   callSendAPI(messageData);
 }
 
@@ -284,26 +305,30 @@ function sendTextMessage(recipientId, messageText) {
 
 
 function callSendAPI(messageData) {
-  console.log(messageData);
+  console.log("callSendAPI ",messageData);
   httpRequest({
     uri: 'https://graph.facebook.com/v2.6/me/messages?access_token='+config.ACCESS_TOKEN,
     method: 'POST',
     json: messageData
 
   }, function (error, response, body) {
+    //error correspond ici à des erreurs servers ?
+    console.log(body.error);
     if (!error && response.statusCode == 200) {
       //var recipientId = body.recipient_id;
       //var messageId = body.message_id;
       //console.log("Successfully sent generic message with id %s to recipient %s", messageId, recipientId);
     } else {
       console.error("Unable to send message.");
-      console.error(response);
-      console.error(error);
+    //  console.error(response);
+      console.error(body.error);
     }
   });
 }
 
 function sendTypingOn(recipientId) {
+
+  console.log("send typing_on");
   var data = {
     recipient: {
       id: recipientId
@@ -323,8 +348,7 @@ function sendTypingOn(recipientId) {
       //console.log("Successfully sent generic message with id %s to recipient %s", messageId, recipientId);
     } else {
       console.error("Unable to send message.");
-      console.error(response);
-      console.error(error);
+      console.error(response.body.error);
     }
   });
 }
