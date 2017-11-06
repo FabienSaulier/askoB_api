@@ -166,14 +166,19 @@ server.post('/webhook', function (req, res) {
 
       console.log("foreach entry", entry);
 
+      // condition pour prévenir un crash server. what's the point of theses messages?
+      if(!entry.messaging){
+        console.log("entry unknonw: ",entry);
+        res.send(200);
+      }
+
       // Iterate over each messaging event
       entry.messaging.forEach(function(event) {
         console.log("foreach event: ", event.message);
         if (event.message) {
           receivedMessage(event);
         } else {
-          //    console.log("Webhook received unknown event: ", event);
-          console.log("Webhook received unknown event... todo: log and analyze ");
+          console.log("message unknonw: ",event);
         }
       });
 
@@ -221,9 +226,14 @@ function receivedMessage(event) {
     requesRecast.analyseText(messageText)
       .then(function(res) {
         var intent = res.intent()
-        console.log("INTENT :",intent);
+        console.log("INTENT : ",intent);
+
         if(intent && intent.slug == 'greetings')
-          sendHomeAnswer(senderID);
+          sendSpecificAnswer('INDEX', senderID);
+        if(intent && intent.slug == 'prevention-soins-hygiene')
+          sendSpecificAnswer('PREVENTION', senderID);
+        else if(intent)
+          sendSpecificAnswer(intent.slug.toUpperCase(), senderID);
         else
           sendDefaultAnswer(senderID);
       })
@@ -353,22 +363,27 @@ function sendTypingOn(recipientId) {
   });
 }
 
-function sendHomeAnswer(senderID){
-  const code = 'INDEX';
 
 //TODO factoriser, au retour de la promise de find, envoyer la réponse.
 //  findAnswer(code);
 
+function sendSpecificAnswer(code, senderID){
+
   const query = Answers.findOne({'code':code});
 
   query.then(
-    function(defaultAnswer){
-      sendAnswer(senderID, defaultAnswer);
+    function(answer){
+      console.log("answer after findOne query", answer);
+      if(!answer)
+        sendDefaultAnswer(senderID);
+      else
+        sendAnswer(senderID, answer);
     },
     function(error){
       console.log("ERROR :",error);
     });
 }
+
 
 function sendDefaultAnswer(senderID){
   const code = 'LOST';
