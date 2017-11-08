@@ -1,13 +1,14 @@
-var restify = require('restify');
-
-const config = require('./config');
+import restify from 'restify'
+import config from './config'
 
 if(config.ENV = 'development'){
-  require('dotenv').config();
+  require('dotenv').config()
 }
-var httpRequest = require('request');
 
-const mongoose = require('mongoose');
+import httpRequest from 'request'
+
+import mongoose from 'mongoose'
+
 mongoose.connect('mongodb://'+process.env.mongodbuser+':'+process.env.mongodbpassword+'@'+process.env.mongodburl, {useMongoClient: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -16,21 +17,17 @@ db.once('open', function() {
 });
 
 
-let recastai = require('recastai').default;
+import recastai from 'recastai' ;
 let clientRecast = new recastai(process.env.RECAST_DEV_ACCESS_TOKEN);
 
-
-const Answers = require('./answer');
-const Themes = require('./themes');
-
-
+import Answers from './answer'
 
 var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 server.use(restify.plugins.queryParser());
 
 /////   CORS  /////////////
-const corsMiddleware = require('restify-cors-middleware');
+import  corsMiddleware from 'restify-cors-middleware';
 const cors = corsMiddleware({
   preflightMaxAge: 5, //Optional
   origins: ['*'],
@@ -114,7 +111,7 @@ server.del('/lapin/answer/:code', function(req, res, next) {
   });
 });
 
-const flattenMongooseValidationError = require('flatten-mongoose-validation-error');
+import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
 
 // Update and Create an asnwer. TODO a factoriser
 server.put('/lapin/answer/', function(req, res, next){

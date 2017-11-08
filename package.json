@@ -2,7 +2,9 @@
   "name": "askob_api",
   "version": "1.0.0",
   "description": "api test asko",
-  "main": "app.js",
+  "scripts": {
+     "start": "nodemon app.js --exec babel-node --presets es2015,stage-2"
+  },
   "dependencies": {
     "dotenv": "^4.0.0",
     "flatten-mongoose-validation-error": "^1.0.1",
@@ -16,10 +18,10 @@
     "restify-cors-middleware": "^1.0.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "nodemon": "^1.11.0"
-  },
-  "scripts": {
-    "start": "node app.js"
   },
   "repository": {
     "type": "git",

@@ -1,5 +1,5 @@
-
-require('dotenv').config();
+import dotenv from 'dotenv'
+dotenv.config()
 
 module.exports = {
 	name: 'API',

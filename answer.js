@@ -1,7 +1,7 @@
 
-const mongoose = require('mongoose');
-const mongooseStringQuery = require('mongoose-string-query');
-const timestamps = require('mongoose-timestamp');
+import mongoose from 'mongoose'
+import mongooseStringQuery from 'mongoose-string-query'
+import timestamps from 'mongoose-timestamp'
 
 
 const SonSchema = new mongoose.Schema(
