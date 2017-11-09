@@ -1,17 +1,17 @@
 
 import Answers from '../model/answer'
+import config from '../config/config'
 
 import {receivedMessage} from '../lib/message'
 
-export default(server) => {
 
+export default(server) => {
 
   server.get('/webhook', function(req, res, next) {
 
-    if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === "123456789") {
+    if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === config.FB_VERIFY_TOKEN) {
       console.log("Validating webhook");
       res.sendRaw(200, req.query['hub.challenge']);
-
     } else {
       console.error("Failed webhook validation. Make sure the validation tokens match.");
       res.send(403);
