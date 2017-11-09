@@ -2,7 +2,9 @@
   "name": "askob_api",
   "version": "1.0.0",
   "description": "api test asko",
-
+  "scripts": {
+     "start": "nodemon server.js --exec babel-node --presets es2015,stage-2"
+  },
   "dependencies": {
     "dotenv": "^4.0.0",
     "flatten-mongoose-validation-error": "^1.0.1",
