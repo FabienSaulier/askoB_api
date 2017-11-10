@@ -3,28 +3,26 @@
   "version": "1.0.0",
   "description": "api test asko",
   "scripts": {
-     "start": "nodemon server.js --exec babel-node --presets es2015,stage-2"
+    "start": "nodemon server.js --exec babel-node --presets es2015,stage-2"
   },
   "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "dotenv": "^4.0.0",
     "flatten-mongoose-validation-error": "^1.0.1",
     "mongodb": "^2.2.31",
     "mongoose": "^4.12.1",
     "mongoose-string-query": "^0.2.5",
     "mongoose-timestamp": "^0.6.0",
+    "mongoose-unique-validator": "^1.0.6",
+    "nodemon": "^1.11.0",
     "recastai": "^3.5.0",
     "request": "^2.83.0",
     "restify": "^6.2.0",
-    "restify-cors-middleware": "^1.0.1",
-
-    "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "nodemon": "^1.11.0"
+    "restify-cors-middleware": "^1.0.1"
   },
-  "devDependencies": {
-
-  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FabienSaulier/askoB_api.git"

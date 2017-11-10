@@ -2,7 +2,7 @@
 import mongoose from 'mongoose'
 import mongooseStringQuery from 'mongoose-string-query'
 import timestamps from 'mongoose-timestamp'
-
+import uniqueValidator from 'mongoose-unique-validator'
 
 const SonSchema = new mongoose.Schema(
 	{
@@ -13,8 +13,7 @@ const SonSchema = new mongoose.Schema(
 		},
 		 code: {
 			type:String,
-			required: true,
-			minlength: [1, 'Le nom et le code ne peuvent pas être vide']
+			required: true
 		}
 	}
 );
@@ -46,6 +45,7 @@ const AnswerSchema = new mongoose.Schema(
 
 AnswerSchema.plugin(timestamps);
 AnswerSchema.plugin(mongooseStringQuery);
+AnswerSchema.plugin(uniqueValidator);
 
 const Answers = mongoose.model('answers', AnswerSchema);
 module.exports = Answers;

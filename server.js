@@ -16,8 +16,6 @@ var server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 server.use(restify.plugins.queryParser());
 
-// plug server to the routes
-routes(server);
 
 /////   CORS  /////////////
 import  corsMiddleware from 'restify-cors-middleware';
@@ -31,8 +29,14 @@ const cors = corsMiddleware({
 server.pre(cors.preflight)
 server.use(cors.actual)
 
+
+
 server.listen(process.env.PORT || 3000, function() {
 	 console.log(`Server is listening on port 3000`);
 });
+
+
+// plug server to the routes
+routes(server);
 
 module.exports = server;
