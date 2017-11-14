@@ -1,6 +1,7 @@
 
 import Answers from '../model/answer'
 import config from '../config/config'
+import winston from 'winston'
 
 import {receivedMessage} from '../lib/message'
 
@@ -10,7 +11,7 @@ export default(server) => {
   server.get('/webhook', function(req, res, next) {
 
     if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === config.FB_VERIFY_TOKEN) {
-      console.log("Validating webhook");
+      winston.info("Validating webhook");
       res.sendRaw(200, req.query['hub.challenge']);
     } else {
       console.error("Failed webhook validation. Make sure the validation tokens match.");
@@ -21,7 +22,7 @@ export default(server) => {
 
   server.post('/webhook', function (req, res) {
     var data = req.body;
-    console.log("post /webhook");
+    winston.info("post /webhook");
 
     // Make sure this is a page subscription
     if (data.object === 'page') {
@@ -31,21 +32,21 @@ export default(server) => {
         var pageID = entry.id;
         var timeOfEvent = entry.time;
 
-        console.log("foreach entry", entry);
+        winston.info("foreach entry", entry);
 
         // condition pour prévenir un crash server. what's the point of theses messages?
         if(!entry.messaging){
-          console.log("entry unknonw: ",entry);
+          winston.info("entry unknonw: ",entry);
           res.send(200);
         }
 
         // Iterate over each messaging event
         entry.messaging.forEach(function(event) {
-          console.log("foreach event: ", event.message);
+          winston.info("foreach event: ", event.message);
           if (event.message) {
             receivedMessage(event);
           } else {
-            console.log("message unknonw: ",event);
+            winston.info("message unknonw: ",event);
           }
         });
 
