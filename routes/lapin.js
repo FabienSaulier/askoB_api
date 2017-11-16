@@ -1,6 +1,6 @@
 
 import Answers from '../model/answer'
-import winston from 'winston'
+
 
 import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
 
@@ -19,7 +19,7 @@ export default(server) => {
           res.send(200, result);
         },
         function(error){
-          winston.info("ERROR :",error);
+          console.log("ERROR :",error);
         }
       );
   });
@@ -32,16 +32,16 @@ export default(server) => {
           res.send(200, result);
         },
         function(error){
-          winston.info("ERROR :",error);
+          console.log("ERROR :",error);
         }
       );
   });
 
   server.del('/lapin/answer/:code', function(req, res, next) {
     const code = req.params.code;
-    winston.info("to delete ", code);
+    console.log("to delete ", code);
     Answers.remove({ code: code}, function (err) {
-      if (err) return winston.info(err);
+      if (err) return console.log(err);
     });
   });
 

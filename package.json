@@ -20,8 +20,7 @@
     "recastai": "^3.5.0",
     "request": "^2.83.0",
     "restify": "^6.2.0",
-    "restify-cors-middleware": "^1.0.1",
-    "winston": "^2.4.0"
+    "restify-cors-middleware": "^1.0.1"
   },
   "devDependencies": {},
   "repository": {

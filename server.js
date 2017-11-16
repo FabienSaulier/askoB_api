@@ -1,16 +1,14 @@
 import restify from 'restify'
-import routes from './routes'
-import mongoose from 'mongoose'
-import winston from 'winston'
-import config from '../config/config'
 
-winston.level = config.LOV_LEVEL
+import routes from './routes';
+
+import mongoose from 'mongoose'
 
 mongoose.connect('mongodb://'+process.env.mongodbuser+':'+process.env.mongodbpassword+'@'+process.env.mongodburl, {useMongoClient: true});
 var db = mongoose.connection;
-db.on('error', winston.error('connection error: 'error));
+db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  winston.info('connected to db');
+    console.log("connected to db");
 });
 
 
@@ -34,7 +32,7 @@ server.use(cors.actual)
 
 
 server.listen(process.env.PORT || 3000, function() {
-	 winston.info(`Server is listening on port 3000`);
+	 console.log(`Server is listening on port 3000`);
 });
 
 
