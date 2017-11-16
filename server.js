@@ -2,13 +2,13 @@ import restify from 'restify'
 import routes from './routes'
 import mongoose from 'mongoose'
 import winston from 'winston'
-import config from './config/config'
+import config from '../config/config'
 
-winston.level = config.LOG_LEVEL
+winston.level = config.LOV_LEVEL
 
 mongoose.connect('mongodb://'+process.env.mongodbuser+':'+process.env.mongodbpassword+'@'+process.env.mongodburl, {useMongoClient: true});
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+db.on('error', winston.error('connection error: 'error));
 db.once('open', function() {
   winston.info('connected to db');
 });
