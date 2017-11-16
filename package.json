@@ -11,6 +11,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "dotenv": "^4.0.0",
     "flatten-mongoose-validation-error": "^1.0.1",
+    "log4js": "^2.3.12",
     "mongodb": "^2.2.31",
     "mongoose": "^4.12.1",
     "mongoose-string-query": "^0.2.5",

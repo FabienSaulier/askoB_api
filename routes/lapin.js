@@ -1,17 +1,11 @@
-
 import Answers from '../model/answer'
-
-
+import logger from '../lib/logger'
 import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
-
 
 export default(server) => {
 
   server.get('/lapin', function(req, res, next) {
     const code = 'INDEX';
-
-
-
   //TODO factoriser
     Answers.findOne({'code':code})
       .then(
@@ -19,7 +13,7 @@ export default(server) => {
           res.send(200, result);
         },
         function(error){
-          console.log("ERROR :",error);
+          logger.fatal(error);
         }
       );
   });
@@ -32,19 +26,18 @@ export default(server) => {
           res.send(200, result);
         },
         function(error){
-          console.log("ERROR :",error);
+          logger.error(error);
         }
       );
   });
 
   server.del('/lapin/answer/:code', function(req, res, next) {
     const code = req.params.code;
-    console.log("to delete ", code);
+    logger.info("Delete /lapin/answer %s ", code);
     Answers.remove({ code: code}, function (err) {
-      if (err) return console.log(err);
+      if (err) return logger.error(err);
     });
   });
-
 
   // Update and Create an asnwer. TODO a factoriser
   server.put('/lapin/answer/', function(req, res, next){
@@ -72,7 +65,4 @@ export default(server) => {
       })
     }
   });
-
-
-
 };

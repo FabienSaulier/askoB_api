@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose'
 import mongooseStringQuery from 'mongoose-string-query'
 import timestamps from 'mongoose-timestamp'
@@ -17,7 +16,6 @@ const SonSchema = new mongoose.Schema(
 		}
 	}
 );
-
 
 const AnswerSchema = new mongoose.Schema(
 	{
