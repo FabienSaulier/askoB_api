@@ -6,7 +6,6 @@ export default(server) => {
 
   server.get('/lapin', function(req, res, next) {
     const code = 'INDEX';
-  //TODO factoriser
     Answers.findOne({'code':code})
       .then(
         function(result){
@@ -39,7 +38,7 @@ export default(server) => {
     });
   });
 
-  // Update and Create an asnwer. TODO a factoriser
+  // Update and Create an asnwer.
   server.put('/lapin/answer/', function(req, res, next){
     const inputAnswer = req.body;
     if(inputAnswer._id){
