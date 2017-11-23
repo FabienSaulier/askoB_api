@@ -4,32 +4,6 @@ import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
 
 export default(server) => {
 
-  server.get('/lapin', function(req, res, next) {
-    const code = 'INDEX';
-    Answers.findOne({'code':code})
-      .then(
-        function(result){
-          res.send(200, result);
-        },
-        function(error){
-          logger.fatal(error);
-        }
-      );
-  });
-
-  server.get('/lapin/answer/:code', function(req, res, next) {
-    const code = req.params.code;
-    Answers.findOne({'code':code})
-      .then(
-        function(result){
-          res.send(200, result);
-        },
-        function(error){
-          logger.error(error);
-        }
-      );
-  });
-
   server.del('/lapin/answer/:code', function(req, res, next) {
     const code = req.params.code;
     logger.info("Delete /lapin/answer %s ", code);
