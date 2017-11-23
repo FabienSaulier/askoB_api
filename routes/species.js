@@ -4,9 +4,12 @@ import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
 
 export default(server) => {
 
-
+  /**
+  * Send all answers of a species.
+  **/
   server.get('/species/:species', function(req, res, next) {
     const species = req.params.species;
+
     Answers.find({'species':species})
       .then(
         function(result){
@@ -18,6 +21,9 @@ export default(server) => {
       );
   });
 
+  /**
+  * Send all answers of a species corresponding to the intent.
+  **/
   server.get('/species/:species/intent/:intent', function(req, res, next) {
     const species = req.params.species;
     const intent = req.params.intent;

@@ -4,13 +4,6 @@ import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
 
 export default(server) => {
 
-  server.del('/lapin/answer/:code', function(req, res, next) {
-    const code = req.params.code;
-    logger.info("Delete /lapin/answer %s ", code);
-    Answers.remove({ code: code}, function (err) {
-      if (err) return logger.error(err);
-    });
-  });
 
   // Update and Create an asnwer.
   server.put('/lapin/answer/', function(req, res, next){

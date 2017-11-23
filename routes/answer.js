@@ -4,6 +4,9 @@ import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
 
 export default(server) => {
 
+  /**
+  * Send an answer
+  **/
   server.get('/answer/:id', function(req, res, next) {
     const id = req.params.id;
     Answers.findOne({'_id':id})
@@ -17,6 +20,9 @@ export default(server) => {
       );
   });
 
+  /**
+  * Delete an answer.
+  **/
   server.del('/answer/:id', function(req, res, next) {
     const id = req.params.id;
     logger.info("Delete answer %s ", id);
@@ -24,5 +30,8 @@ export default(server) => {
       if (err) return logger.error(err);
     });
   });
+
+
+
 
 }
