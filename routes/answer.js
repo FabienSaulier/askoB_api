@@ -16,4 +16,13 @@ export default(server) => {
         }
       );
   });
+
+  server.del('/answer/:id', function(req, res, next) {
+    const id = req.params.id;
+    logger.info("Delete answer %s ", id);
+    Answers.remove({ _id: id}, function (err) {
+      if (err) return logger.error(err);
+    });
+  });
+
 }
