@@ -1,6 +1,7 @@
 import Answers from '../model/answer'
 import logger from '../lib/logger'
 import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
+import errs from 'restify-errors'
 
 export default(server) => {
 
@@ -36,11 +37,11 @@ export default(server) => {
   server.put('/answer/', function(req, res, next){
     const inputAnswer = req.body;
     if(inputAnswer._id){
-      Answers.update({_id:inputAnswer._id}, inputAnswer, {runValidators: true}, function(err, answer){
+      Answers.update({_id:inputAnswer._id}, inputAnswer, function(err, answer){
         if(err){
           const e = flattenMongooseValidationError(err, ' - ');
-          res.send(400, {'errorMsg': e});
-          return next();
+          logger.warn(e);
+          return next(new errs.UnprocessableEntityError(e));
         } else{
           res.send(200);
         }
@@ -49,8 +50,8 @@ export default(server) => {
       Answers.create(inputAnswer, function(err){
         if(err){
           const e = flattenMongooseValidationError(err, ' - ');
-          res.send(400, {'errorMsg': e});
-          return next();
+          logger.warn(e)
+          return next(new errs.UnprocessableEntityError(e));
         }else{
           res.send(200);
           return next();
