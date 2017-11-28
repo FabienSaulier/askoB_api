@@ -36,22 +36,21 @@ export default(server) => {
   // Update and Create an asnwer.
   server.put('/answer/', function(req, res, next){
     const inputAnswer = req.body;
-    if(inputAnswer._id){
-      Answers.update({_id:inputAnswer._id}, inputAnswer, function(err, answer){
+    if(inputAnswer && inputAnswer._id){
+      Answers.update({_id:inputAnswer._id}, inputAnswer, {runValidators: true}, function(err, answer){
         if(err){
-          const e = flattenMongooseValidationError(err, ' - ');
-          logger.warn(e);
-          return next(new errs.UnprocessableEntityError(e));
+          res.send(buildErrorMsg(err))
+          return next()
         } else{
           res.send(200);
+          return next();
         }
       })
     }else{
       Answers.create(inputAnswer, function(err){
         if(err){
-          const e = flattenMongooseValidationError(err, ' - ');
-          logger.warn(e)
-          return next(new errs.UnprocessableEntityError(e));
+          res.send(buildErrorMsg(err))
+          return next()
         }else{
           res.send(200);
           return next();
@@ -60,6 +59,10 @@ export default(server) => {
     }
   });
 
-
+  function buildErrorMsg(err){
+    const e = flattenMongooseValidationError(err, ' - ');
+    const error = new errs.UnprocessableEntityError({message:e})
+    return error;
+  }
 
 }

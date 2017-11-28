@@ -21,7 +21,6 @@ const AnswerSchema = new mongoose.Schema(
 	  name: {
 			type: String,
 			required: [true, "Un name est nécessaire"],
-			unique: [true, "Le name est déjà utilisé"],
 		},
 		description: { // description utilise en interne
 			type: String,
@@ -57,7 +56,7 @@ const AnswerSchema = new mongoose.Schema(
 
 AnswerSchema.plugin(timestamps);
 AnswerSchema.plugin(mongooseStringQuery);
-AnswerSchema.plugin(uniqueValidator);
+AnswerSchema.plugin(uniqueValidator); // for name but buggy when update
 
 const Answers = mongoose.model('answers', AnswerSchema);
 module.exports = Answers;
