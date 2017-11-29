@@ -1,10 +1,12 @@
-import species from './species';
-import answer from './answer';
-import webhook from './webhook';
+import species from './species'
+import answer from './answer'
+import nlp from './nlp'
+import webhook from './webhook'
 
 // combine routes
 export default(server) => {
-  species(server);
-  answer(server);
-  webhook(server);
+  species(server)
+  answer(server)
+  webhook(server)
+  nlp(server)
 };
