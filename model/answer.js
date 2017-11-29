@@ -24,7 +24,6 @@ const AnswerSchema = new mongoose.Schema(
 		},
 		description: { // description utilise en interne
 			type: String,
-			required: [true, "Une description est nécessaire"],
 		},
 		species: {
 			type: String,
