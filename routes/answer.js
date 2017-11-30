@@ -28,10 +28,10 @@ export default(server) => {
     const id = req.params.id;
     logger.info("Delete answer %s ", id);
     Answers.remove({ _id: id}, function (err) {
-      if (err) return logger.error(err);
+      if (err) return logger.error(err)
+      else res.send(200)
     });
   });
-
 
   // Update and Create an asnwer.
   server.put('/answer/', function(req, res, next){
