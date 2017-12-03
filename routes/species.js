@@ -28,7 +28,7 @@ export default(server) => {
     const species = req.params.species;
     const intent = req.params.intent;
 
-    Answers.find({'species':species, 'intent':intent})
+    Answers.find({'species':species, 'intent':intent}).sort({'name':1})
       .then(
         function(result){
           res.send(200, result);
