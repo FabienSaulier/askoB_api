@@ -9,6 +9,10 @@ const SubAnswerSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		name: {
+			type: String,
+			required: true,
+		},
 		 label: { // le label affiché en cas de quick_reply
 			type: String,
 			required: true
