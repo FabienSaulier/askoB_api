@@ -35,7 +35,6 @@ const AnswerSchema = new mongoose.Schema(
 		},
 		intent: {
 			type: String,
-			required: [true, "Une intent est nécessaire"],
 		},
 		entities: {
 			type: [String],
