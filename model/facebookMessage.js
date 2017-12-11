@@ -1,3 +1,5 @@
+import logger from '../lib/logger'
+
 export default class FacebookMessage{
 
   get(){
@@ -5,6 +7,13 @@ export default class FacebookMessage{
   }
 
   constructor(answer, recipientId){
+
+    if(!answer){
+      answer = {}
+      answer.text = "Désolé, je ne sais pas encore répondre à cette question! 🐰"
+      logger.error("Envoie d'une réponse vide à Facebook")
+    }
+
 
 //  mettre l'objet sous cette forme ?    this.recipientId = recipientId;
 

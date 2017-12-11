@@ -39,6 +39,9 @@ const AnswerSchema = new mongoose.Schema(
 		entities: {
 			type: [String],
 		},
+		entValues: {
+			type: [String],
+		},
 	  text: {
 			type: String,
 			required: [true, "Le texte de la réponse ne doit pas être vide"],
