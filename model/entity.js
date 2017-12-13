@@ -16,13 +16,13 @@ const EntitySchema = new mongoose.Schema(
 			type: String,
 		},
 		custom: {
-			type: [Boolean],
+			type: Boolean,
 		},
 		count: { // pas mis à jour par l'api (on ne maj quand les nouvelles entities)
 			type: Number,
 		},
 		areValuesPertinent: {
-			type: [Boolean],
+			type: Boolean,
 		},
 	}
 );
