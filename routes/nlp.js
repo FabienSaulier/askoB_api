@@ -1,9 +1,7 @@
 import config from '../config/config'
-import recastai from 'recastai' ;
 import logger from '../lib/logger'
 import axios from 'axios'
 
-let clientRecast = new recastai(config.RECAST_DEV_ACCESS_TOKEN);
 
 export default(server) => {
 
