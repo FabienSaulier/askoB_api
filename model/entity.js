@@ -21,6 +21,9 @@ const EntitySchema = new mongoose.Schema(
 		count: { // pas mis à jour par l'api (on ne maj quand les nouvelles entities)
 			type: Number,
 		},
+		order: {
+			type: Number,
+		},
 		areValuesPertinent: {
 			type: Boolean,
 		},
