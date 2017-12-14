@@ -38,6 +38,28 @@ export default(server) => {
 
   });
 
+  server.put('/entities/', function(req, res, next){
+
+    const entities = req.body;
+    const bulk = Entities.collection.initializeOrderedBulkOp();
+
+    entities.forEach((entity) => {
+      Entities.update({ _id: entity._id }, { areValuesPertinent: entity.areValuesPertinent },
+        function(err, answer){
+          if(err){
+            console.log(error)
+            //res.send(buildErrorMsg(err))
+        //    return next()
+          } else{
+        //    res.send(200)
+          //  return next()
+          }
+        }
+      );
+    })
+  });
+
+
   // return entities who are present in recastEntities but not kanzi
   function findDifferents(recastEntities, kanzi){
     let diff = []
