@@ -24,6 +24,9 @@ const EntitySchema = new mongoose.Schema(
 		order: {
 			type: Number,
 		},
+		isFiltered: {
+			type: Boolean,
+		},
 		areValuesPertinent: {
 			type: Boolean,
 		},

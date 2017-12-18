@@ -44,7 +44,7 @@ export default(server) => {
     const bulk = Entities.collection.initializeOrderedBulkOp();
 
     entities.forEach((entity) => {
-      Entities.update({ _id: entity._id }, { areValuesPertinent: entity.areValuesPertinent },
+      Entities.update({ _id: entity._id }, { isFiltered: entity.isFiltered, areValuesPertinent: entity.areValuesPertinent },
         function(err, answer){
           if(err){
             console.log(error)
