@@ -36,7 +36,6 @@ export default(server) => {
 
         // condition pour prévenir un crash server. what's the point of theses messages?
         if(!entry.messaging){
-          logger.warn("entry unknonw: ",entry);
           return;
         }
 

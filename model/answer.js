@@ -3,15 +3,18 @@ import mongooseStringQuery from 'mongoose-string-query'
 import timestamps from 'mongoose-timestamp'
 import uniqueValidator from 'mongoose-unique-validator'
 
-const SonSchema = new mongoose.Schema(
+const SubAnswerSchema = new mongoose.Schema(
 	{
-		name: {
-			type:String,
+		_id: {
+			type: String,
 			required: true,
-			minlength: [1, 'Le nom et le code ne peuvent pas être vide']
 		},
-		 code: {
-			type:String,
+		name: {
+			type: String,
+			required: true,
+		},
+		 label: { // le label affiché en cas de quick_reply
+			type: String,
 			required: true
 		}
 	}
@@ -19,31 +22,46 @@ const SonSchema = new mongoose.Schema(
 
 const AnswerSchema = new mongoose.Schema(
 	{
-	  code: {
+	  name: {
 			type: String,
-			required: [true, "Un code est nécessaire"],
-			unique: [true, "Le code est déjà utilisé"]
+			required: [true, "Un name est nécessaire"],
 		},
-		name: {
+		description: { // description utilise en interne
 			type: String,
-			required: [true, "Un nom est nécessaire"]
+		},
+		species: {
+			type: String,
+			required: [true, "Une species est nécessaire"],
+		},
+		intent: {
+			type: String,
+		},
+		entities: {
+			type: [String],
+		},
+		entValues: {
+			type: [String],
 		},
 	  text: {
 			type: String,
-			required: [true, "Le texte de la réponse ne doit pas être vide"]
+			required: [true, "Le texte de la réponse ne doit pas être vide"],
 		},
-		deleted:{
-			type: Boolean
+		children: {
+			type: [SubAnswerSchema],
 		},
-	  sons: {
-			type: [SonSchema]
-		}
+		siblings: {
+			type: [SubAnswerSchema],
+		},
+		is_deleted:{
+			type: Boolean,
+			default: false,
+		},
 	}
 );
 
 AnswerSchema.plugin(timestamps);
 AnswerSchema.plugin(mongooseStringQuery);
-AnswerSchema.plugin(uniqueValidator);
+AnswerSchema.plugin(uniqueValidator); // for name but buggy when update
 
 const Answers = mongoose.model('answers', AnswerSchema);
 module.exports = Answers;

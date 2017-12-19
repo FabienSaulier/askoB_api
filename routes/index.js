@@ -1,8 +1,14 @@
-import lapin from './lapin';
-import webhook from './webhook';
+import species from './species'
+import answer from './answer'
+import nlp from './nlp'
+import entity from './entity'
+import webhook from './webhook'
 
 // combine routes
 export default(server) => {
-  lapin(server);
-  webhook(server);
+  species(server)
+  answer(server)
+  webhook(server)
+  nlp(server)
+  entity(server)
 };
