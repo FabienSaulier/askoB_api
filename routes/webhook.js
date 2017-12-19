@@ -1,7 +1,8 @@
 import Answers from '../model/answer'
 import config from '../config/config'
 import logger from '../lib/logger'
-import {receivedMessage} from '../lib/message'
+import * as Message from '../lib/message'
+import FacebookMessage from '../model/facebookMessage'
 
 /**
 * Facebook entries point
@@ -41,8 +42,12 @@ export default(server) => {
 
         // Iterate over each messaging event
         entry.messaging.forEach(function(event) {
-          if (event.message) {
-            receivedMessage(event);
+          if(event.message) {
+
+            const senderID = event.sender.id;
+            Message.sendTypingOn(senderID)
+            handleMessage(event.message, senderID)
+
           } else {
             logger.info("message unknown: ",event);
           }
@@ -59,3 +64,24 @@ export default(server) => {
   });
 
 };
+
+async function handleMessage(message, senderID) {
+
+    const msgData = await Message.analyseMessage(message)
+
+    if(msgData.payload){
+      const answer = await Message.getAnswerById(msgData.payload)
+      const fbMsg = new FacebookMessage(answer, senderID);
+      Message.postTofacebook(fbMsg.get());
+    } else{
+      const intent = msgData.intent()
+      const entities = Message.getEntities(msgData);
+      const entitiesValues = await Message.getEntitiesValues(msgData)
+
+      const answer = await Message.findRightAnswer(intent, entities, entitiesValues)
+
+      const fbMsg = new FacebookMessage(answer, senderID);
+      Message.postTofacebook(fbMsg.get());
+
+    }
+}
