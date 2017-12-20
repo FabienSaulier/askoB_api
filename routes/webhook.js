@@ -49,7 +49,7 @@ export default(server) => {
             handleMessage(event.message, senderID)
 
           } else {
-            logger.info("message unknown: ",event);
+            // logger.info("message unknown: ",event);
           }
         });
 
