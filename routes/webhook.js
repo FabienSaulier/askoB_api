@@ -77,11 +77,16 @@ async function handleMessage(message, senderID) {
       const intent = msgData.intent()
       const entities = Message.getEntities(msgData);
       const entitiesValues = await Message.getEntitiesValues(msgData)
+      const entitiesAndValues = entities.concat(entitiesValues)
 
-      const answer = await Message.findRightAnswer(intent, entities, entitiesValues)
+      logger.info(entitiesAndValues)
 
-      const fbMsg = new FacebookMessage(answer, senderID);
+      // response can be an answer or quick replies
+      const response = await Message.findAnswer(intent, entitiesAndValues)
+
+      const fbMsg = new FacebookMessage(response, senderID);
       Message.postTofacebook(fbMsg.get());
+
 
     }
 }
