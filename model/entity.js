@@ -37,5 +37,5 @@ EntitySchema.statics.getEntitiesName = function() {
 	 return this.find({isFiltered:true}, {name:true, _id:false})
 };
 
-const Entities = mongoose.model('entities', EntitySchema);
+const Entities = mongoose.models.entities || mongoose.model('entities', EntitySchema);
 module.exports = Entities;

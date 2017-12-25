@@ -63,5 +63,5 @@ AnswerSchema.plugin(timestamps);
 AnswerSchema.plugin(mongooseStringQuery);
 AnswerSchema.plugin(uniqueValidator); // for name but buggy when update
 
-const Answers = mongoose.model('answers', AnswerSchema);
+const Answers = mongoose.models.answers || mongoose.model('answers', AnswerSchema);
 module.exports = Answers;
