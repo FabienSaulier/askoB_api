@@ -3,46 +3,52 @@ import rewire from 'rewire'
 
 const Message = rewire('../lib/message')
 let canExploseEntities = Message.__get__('canExploseEntities');
-let exploseWithDuplicates = Message.__get__('exploseWithDuplicates');
-let removeDuplicates = Message.__get__('removeDuplicates');
+let exploseArrays = Message.__get__('exploseArrays');
 let explose = Message.__get__('explose');
 
 describe("explose tests", function() {
-  const entititiesAndValues = ['A','B','C']
-  const entititiesAndValues2 = ['A']
-  const resFirstExplosion = [['A','B'],['A','C'],['B','C']]
-  const resSecondExplosion = [['A'],['B'],['C']]
+  const entititiesAndValuesABC = ['A','B','C']
+  const resFirstExplosionABC = [['B','C'],['A','C'],['A','B']]
+  const resSecondExplosionABC = [['C'],['B'],['A']]
 
-  it("canExploseEntities of array", function() {
-    expect(canExploseEntities(entititiesAndValues)).to.equal(true)
-  });
-  it("canExploseEntities of array[array]", function() {
-    expect(canExploseEntities(resFirstExplosion)).to.equal(true)
-  });
-  it("canExploseEntities expected false to array[array] with one entity", function() {
-    expect(canExploseEntities(resSecondExplosion)).to.equal(false)
-  });
-  it("canExploseEntities expected false to array with one entity", function() {
-    expect(canExploseEntities(entititiesAndValues2)).to.equal(false)
-  });
-/*
-  it("exploseWithDuplicates", function() {
-    const entititiesAndValues = ['A','B','C']
-    const resFirstExplosion = [['A','B'],['A','C'],['B','C']]
-    const resSecondExplosion = [['A'],['B'],['C']]
+  const entititiesAndValuesABCD = ['A','B','C','D']
+  const resFirstExplosionABCD = [['B','C','D'],['A','C','D'],['A','B','D'],['A','B','C']]
+  const resSecondExplosionABCD = [['C','D'],['B','D'],['B','C'],['A','D'],['A','C'],['A','B']]
+  const resThirdExplosionABCD = [['A'],['B'],['C'],['D']]
 
+  describe("can expplose?", function(){
+    it("canExploseEntities of array[array]", function() {
+      expect(canExploseEntities(entititiesAndValuesABC)).to.equal(true)
+    });
+    it("canExploseEntities of array[array]", function() {
+      expect(canExploseEntities(resFirstExplosionABC)).to.equal(true)
+    });
+    it("canExploseEntities expected false with only one entity", function() {
+      const onlyOneEntity = ['uniqueEntity']
+      expect(canExploseEntities(onlyOneEntity)).to.equal(false)
+    });
+  })
 
-  });
+  describe("explose", function(){
+    it("explose 3 into 3x2", function() {
+      expect(explose(entititiesAndValuesABC)).to.deep.equal(resFirstExplosionABC)
+    });
+    it("explose 4 into 4x3", function() {
+      expect(explose(entititiesAndValuesABCD)).to.deep.equal(resFirstExplosionABCD)
+    });
+  })
 
-  it("removeDuplicates", function() {
+  describe("exploseArrays", function(){
+    it("explose 3x2 into 3x1", function() {
+      expect(exploseArrays(resFirstExplosionABC)).to.deep.equal(resSecondExplosionABC)
+    });
 
-
-  });
-
-  it("explose", function() {
-
-
-  });
-  */
+    it("explose 4x3 into 4x2", function() {
+      expect(exploseArrays(resFirstExplosionABCD)).to.deep.equal(resSecondExplosionABCD)
+    });
+    it("explose 4x2 into 4x1", function() {
+      expect(exploseArrays(resFirstExplosionABCD)).to.deep.equal(resSecondExplosionABCD)
+    });
+  })
 
 });
