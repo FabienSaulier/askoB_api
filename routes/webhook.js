@@ -77,7 +77,7 @@ async function handleMessage(message, senderID) {
       const intent = msgData.intent()
       const entities = Message.getEntities(msgData);
       let entitiesValues = await Message.getEntitiesValues(msgData)
-      entitiesValues = entitiesValues.map(entitie => entitie.toUpperCase())
+  //    entitiesValues = entitiesValues.map(entitie => entitie.toUpperCase())
       const entitiesAndValues = entities.concat(entitiesValues)
 
       // response can be an answer or quick replies
