@@ -21,4 +21,17 @@ export default(server) => {
       );
   });
 
+  server.get('/intent/:intent', function(req, res, next) {
+    const intent = req.params.intent;
+    Answers.find({intent:intent } )
+      .then(
+        function(result){
+          res.send(200, result);
+        },
+        function(error){
+          logger.fatal(error);
+        }
+      );
+  });
+
 }

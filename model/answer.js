@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import mongooseStringQuery from 'mongoose-string-query'
 import timestamps from 'mongoose-timestamp'
 import uniqueValidator from 'mongoose-unique-validator'
+import _ from 'lodash'
 
 const SubAnswerSchema = new mongoose.Schema(
 	{
@@ -58,6 +59,12 @@ const AnswerSchema = new mongoose.Schema(
 		},
 	}
 );
+
+AnswerSchema.statics.findOneRandomByIntent = async function(intent) {
+	const result = await this.find({'intent':intent})
+	const randomIndex = _.random(0, result.length-1)
+	return result[randomIndex]
+};
 
 AnswerSchema.plugin(timestamps);
 AnswerSchema.plugin(mongooseStringQuery);
