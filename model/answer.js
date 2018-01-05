@@ -27,6 +27,9 @@ const AnswerSchema = new mongoose.Schema(
 			type: String,
 			required: [true, "Un name est nécessaire"],
 		},
+		quickReplyLabel: {
+			type: String,
+		},
 		description: { // description utilise en interne
 			type: String,
 		},

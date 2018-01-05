@@ -14,9 +14,6 @@ export default class FacebookMessage{
       logger.error("Envoie d'une réponse vide à Facebook")
     }
 
-
-//  mettre l'objet sous cette forme ?    this.recipientId = recipientId;
-
     // construction des quickReplies
     let quick_replies = [];
     if(answer.children){
