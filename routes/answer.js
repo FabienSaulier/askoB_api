@@ -37,7 +37,7 @@ export default(server) => {
   // Update and Create an asnwer.
   server.put('/answer/', function(req, res, next){
     const inputAnswer = req.body;
-    logger.info(inputAnswer)
+    logger.info("sauvegarde d'une nouvelle reponse",inputAnswer)
     if(inputAnswer && inputAnswer._id){
       Answers.update({_id:inputAnswer._id}, inputAnswer, {runValidators: true}, function(err, answer){
         if(err){
