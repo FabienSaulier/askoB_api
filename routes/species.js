@@ -10,7 +10,7 @@ export default(server) => {
   server.get('/species/:species', function(req, res, next) {
     const species = req.params.species;
 
-    Answers.find({'species':species})
+    Answers.find({'species':species}).sort({name:1})
       .then(
         function(result){
           res.send(200, result);
