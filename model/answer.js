@@ -27,11 +27,15 @@ const AnswerSchema = new mongoose.Schema(
 			type: String,
 			required: [true, "Un name est nécessaire"],
 		},
+		description: { // description utilise en interne
+			type: String,
+		},
 		quickReplyLabel: {
 			type: String,
 		},
-		description: { // description utilise en interne
-			type: String,
+		precise:{
+			type: Boolean,
+			default: false,
 		},
 		species: {
 			type: String,
