@@ -54,6 +54,9 @@ const AnswerSchema = new mongoose.Schema(
 			type: String,
 			required: [true, "Le texte de la réponse ne doit pas être vide"],
 		},
+		gifId: {
+			type: String,
+		},
 		children: {
 			type: [SubAnswerSchema],
 		},
