@@ -4,24 +4,46 @@ import util from 'util'
 import logger from '../lib/logger'
 
 const Message = rewire('../lib/message')
-let buildAnswerFromSeverals = Message.__get__('buildAnswerFromSeverals');
+const filterAnswers = Message.__get__('filterAnswers');
+const filterPrecise = Message.__get__('filterPrecise');
 
-describe("buildAnswerFromSeverals", function() {
-  const answers = [{text:'A', entities:['A','B','C']},
-                  {text:'B', entities:['A','B']},
-                  {text:'C', entities:['A','B']},
+describe("filterAnswers", function() {
+  const answers = [{text:'A', entities:['A','B','C'], precise:false},
+                  {text:'B', entities:['A','B'], precise:false},
+                  {text:'C', entities:['A','B'], precise:false},
                 ]
+  const emptyAnswer = []
 
   it("return one answer", function() {
-    expect(buildAnswerFromSeverals(answers, 3)).to.deep.equal(answers[0])
+    expect(filterAnswers(answers, 3).length).to.equal(1)
   });
   it("return an answer with 2 quick replies", function() {
-    expect(buildAnswerFromSeverals(answers, 2).children.length).to.equal(2)
+    expect(filterAnswers(answers, 2).length).to.equal(2)
   });
   it("all anwser have lower dimension: return all answers in quick replies", function() {
-    expect(buildAnswerFromSeverals(answers, 4).children.length).to.equal(3)
+    expect(filterAnswers(answers, 4).length).to.equal(3)
   });
   it("all anwser have higher dimension: return all answers in quick replies", function() {
-    expect(buildAnswerFromSeverals(answers, 1).children.length).to.equal(3)
+    expect(filterAnswers(answers, 1).length).to.equal(3)
   });
+  it("input is an empty answer (case where filterPrecise remove all)", function() {
+    expect(filterAnswers(emptyAnswer, 1).length).to.equal(0)
+  });
+
+});
+
+describe("filterPrecise", function() {
+  const answers = [{text:'A', entities:['A','B','C'], precise:true},
+                  {text:'B', entities:['A','B'], precise:false},
+                  {text:'C', entities:['A','B'], precise:false},
+                ]
+
+  it("remove one precise", function() {
+    expect(filterPrecise(answers, 2).length).to.equal(2)
+  });
+  it("remove none", function() {
+    expect(filterPrecise(answers, 3).length).to.equal(3)
+  });
+
+
 });
