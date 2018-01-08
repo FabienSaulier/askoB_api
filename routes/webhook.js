@@ -3,6 +3,7 @@ import config from '../config/config'
 import logger from '../lib/logger'
 import * as Message from '../lib/message'
 import FacebookMessage from '../model/facebookMessage'
+import FacebookMessageGif from '../model/facebookMessageGif'
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 
 
@@ -85,5 +86,10 @@ async function handleMessage(message, senderID) {
 
       const fbMsg = new FacebookMessage(answer, senderID);
       FacebookApiWrapper.postTofacebook(fbMsg.get());
+      if(answer.gifId){
+        const fbMsgGif = new FacebookMessageGif(answer, senderID);
+        FacebookApiWrapper.postTofacebook(fbMsgGif.get());
+      }
+
     }
 }

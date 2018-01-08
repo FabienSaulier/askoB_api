@@ -1,6 +1,6 @@
 import logger from '../lib/logger'
 
-export default class FacebookMessage{
+export default class FacebookMessageGif{
 
   get(){
     return this.messageData
@@ -20,15 +20,20 @@ export default class FacebookMessage{
       })
     }
 
-
     // construction du message
     let message = {}
 
-    if(quick_replies.length == 0){
-      message.text = answer.text
-    } else{
-      message.text = answer.text
+    // On ne peut pas ajouter du text à un image, mais on peut mettre des quick replies
+    if(quick_replies.length > 0){
       message.quick_replies = quick_replies
+    }
+
+    message.attachment = {
+      "type":"image",
+      "payload":{
+        "url":'https://media.giphy.com/media/'+answer.gifId+'/200.gif',
+        "is_reusable":true
+      }
     }
 
     this.messageData = {'recipient': {id: recipientId}, 'message':message}
