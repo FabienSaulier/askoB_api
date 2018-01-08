@@ -26,15 +26,18 @@ export default class FacebookMessage{
       })
     }
 
+
     // construction du message
     const recipient = {id: recipientId}
     let message = {}
-    if(quick_replies.length <1){
-      message = {'text': answer.text}
-    } else{
-      message = {'text': answer.text, 'quick_replies':quick_replies}
-    }
 
+    if(quick_replies.length <1){
+      message.text = answer.text
+    } else{
+      message.text = answer.text
+      message.quick_replies = quick_replies
+    }
+    
     this.messageData = {'recipient': {id: recipientId}, 'message':message}
   }
 

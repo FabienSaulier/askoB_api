@@ -3,6 +3,8 @@ import config from '../config/config'
 import logger from '../lib/logger'
 import * as Message from '../lib/message'
 import FacebookMessage from '../model/facebookMessage'
+import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
+
 
 /**
 * Facebook entries point
@@ -42,10 +44,10 @@ export default(server) => {
 
         // Iterate over each messaging event
         entry.messaging.forEach(function(event) {
-          if(event.message) {
+          if(event.message && event.message.text) { // check if it is an Actual message
 
             const senderID = event.sender.id;
-            Message.sendTypingOn(senderID)
+            FacebookApiWrapper.sendTypingOn(senderID)
             handleMessage(event.message, senderID)
 
           } else {
@@ -72,18 +74,16 @@ async function handleMessage(message, senderID) {
     if(msgData.payload){
       const answer = await Message.getAnswerById(msgData.payload)
       const fbMsg = new FacebookMessage(answer, senderID);
-      Message.postTofacebook(fbMsg.get());
+      FacebookApiWrapper.postTofacebook(fbMsg.get());
     } else{
       const intent = msgData.intent()
       const entities = Message.getEntities(msgData);
       let entitiesValues = await Message.getEntitiesValues(msgData)
-  //    entitiesValues = entitiesValues.map(entitie => entitie.toUpperCase())
       const entitiesAndValues = entities.concat(entitiesValues)
 
-      // response can be an answer or quick replies
-      const response = await Message.findAnswer(intent, [entitiesAndValues])
+      const answer = await Message.findAnswer(intent, [entitiesAndValues])
 
-      const fbMsg = new FacebookMessage(response, senderID);
-      Message.postTofacebook(fbMsg.get());
+      const fbMsg = new FacebookMessage(answer, senderID);
+      FacebookApiWrapper.postTofacebook(fbMsg.get());
     }
 }
