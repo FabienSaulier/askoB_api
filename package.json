@@ -14,26 +14,23 @@
     "bluebird": "^3.5.1",
     "chai": "^4.1.2",
     "dotenv": "^4.0.0",
+    "eslint": "^4.15.0",
     "flatten-mongoose-validation-error": "^1.0.1",
     "lodash": "^4.17.4",
-    "log4js": "^2.3.12",
-    "mocha": "^4.0.1",
-    "mongodb": "^2.2.31",
-    "mongoose": "^4.12.1",
+    "log4js": "^2.4.1",
+    "mocha": "^4.1.0",
+    "mongodb": "^2.2.34",
+    "mongoose": "^4.13.9",
     "mongoose-string-query": "^0.2.5",
     "mongoose-timestamp": "^0.6.0",
     "mongoose-unique-validator": "^1.0.6",
-    "nodemon": "^1.11.0",
-    "recastai": "^3.5.0",
+    "nodemon": "^1.14.10",
+    "recastai": "^3.7.0",
     "request": "^2.83.0",
-    "restify": "^6.2.0",
-    "restify-cors-middleware": "^1.0.1",
+    "restify": "^6.3.4",
+    "restify-cors-middleware": "^1.1.0",
     "restify-errors": "^5.0.0",
     "rewire": "^3.0.2"
-  },
-  "devDependencies": {
-    "mocha-webpack": "^1.0.1",
-    "webpack-dev-server": "^2.9.7"
   },
   "repository": {
     "type": "git",
@@ -44,5 +41,9 @@
   "bugs": {
     "url": "https://github.com/FabienSaulier/kanzapi/issues"
   },
-  "homepage": "https://github.com/FabienSaulier/kanzapi#readme"
+  "homepage": "https://github.com/FabienSaulier/kanzapi#readme",
+  "devDependencies": {
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0"
+  }
 }
