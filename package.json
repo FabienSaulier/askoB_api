@@ -14,7 +14,6 @@
     "bluebird": "^3.5.1",
     "chai": "^4.1.2",
     "dotenv": "^4.0.0",
-    "eslint": "^4.15.0",
     "flatten-mongoose-validation-error": "^1.0.1",
     "lodash": "^4.17.4",
     "log4js": "^2.4.1",
@@ -43,6 +42,7 @@
   },
   "homepage": "https://github.com/FabienSaulier/kanzapi#readme",
   "devDependencies": {
+    "eslint": "^4.15.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0"
   }
