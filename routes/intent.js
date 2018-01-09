@@ -1,37 +1,34 @@
 import Answers from '../model/answer'
 import logger from '../lib/logger'
-import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
 
 export default(server) => {
-
   /**
   * Send all general answers of a species
-  **/
-  server.get('/generalitents/:species', function(req, res, next) {
-    const species = req.params.species;
+  * */
+  server.get('/generalitents/:species', (req, res) => {
+    const { species } = req.params
     const generalIntents = ['greetings', 'goodbye']
-    Answers.find({'species':species, 'intent':{ $in: generalIntents} } )
+    Answers.find({ species, intent: { $in: generalIntents } })
       .then(
-        function(result){
-          res.send(200, result);
+        (result) => {
+          res.send(200, result)
         },
-        function(error){
-          logger.fatal(error);
-        }
-      );
-  });
+        (error) => {
+          logger.fatal(error)
+        },
+      )
+  })
 
-  server.get('/intent/:intent', function(req, res, next) {
-    const intent = req.params.intent;
-    Answers.find({intent:intent } )
+  server.get('/intent/:intent', (req, res) => {
+    const { intent } = req.params
+    Answers.find({ intent })
       .then(
-        function(result){
-          res.send(200, result);
+        (result) => {
+          res.send(200, result)
         },
-        function(error){
-          logger.fatal(error);
-        }
-      );
-  });
-
+        (error) => {
+          logger.fatal(error)
+        },
+      )
+  })
 }

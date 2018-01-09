@@ -13,4 +13,4 @@ export default(server) => {
   webhook(server)
   nlp(server)
   entity(server)
-};
+}

@@ -8,12 +8,16 @@ module.exports = {
 
 "env": {
     "mocha": true,
-    "node": true
+    "node": true,
+    "es6": true,
 },
 
   rules: {
-    semi: 'off',
+    semi: ["error", "never"],
     'linebreak-style': ['error', 'windows'],
+    "no-use-before-define": ["error", { "functions": false }],
+    'no-plusplus': "off",
+    'no-underscore-dangle': 'off',
 
   },
 };

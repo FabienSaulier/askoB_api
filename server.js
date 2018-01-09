@@ -2,6 +2,7 @@ import restify from 'restify'
 import routes from './routes'
 import logger from './lib/logger'
 import cors from './lib/cors'
+import db from './model/db.js'
 
 const server = restify.createServer()
 server.use(restify.plugins.bodyParser())

@@ -1,6 +1,8 @@
 import logger from '../lib/logger'
 import mongoose from 'mongoose'
 
+mongoose.Promise = global.Promise;
+
 mongoose.connect('mongodb://'+process.env.mongodbuser+':'+process.env.mongodbpassword+'@'+process.env.mongodburl, {useMongoClient: true});
 var db = mongoose.connection;
 db.on('error', function(error) {
