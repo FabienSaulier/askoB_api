@@ -71,25 +71,23 @@ export default(server) => {
 async function handleMessage(message, senderID) {
 
     const msgData = await Message.analyseMessage(message)
-
+    let answer
     if(msgData.payload){
-      const answer = await Message.getAnswerById(msgData.payload)
-      const fbMsg = new FacebookMessage(answer, senderID);
-      FacebookApiWrapper.postTofacebook(fbMsg.get());
+      answer = await Message.getAnswerById(msgData.payload)
+
     } else{
       const intent = msgData.intent()
       const entities = Message.getEntities(msgData);
       let entitiesValues = await Message.getEntitiesValues(msgData)
       const entitiesAndValues = entities.concat(entitiesValues)
+      answer = await Message.findAnswer(intent, [entitiesAndValues])
+    }
 
-      const answer = await Message.findAnswer(intent, [entitiesAndValues])
-
-      const fbMsg = new FacebookMessage(answer, senderID);
-      FacebookApiWrapper.postTofacebook(fbMsg.get());
-      if(answer.gifId){
-        const fbMsgGif = new FacebookMessageGif(answer, senderID);
-        FacebookApiWrapper.postTofacebook(fbMsgGif.get());
-      }
-
+    // send message
+    const fbMsg = new FacebookMessage(answer, senderID);
+    FacebookApiWrapper.postTofacebook(fbMsg.get());
+    if(answer.gifId){
+      const fbMsgGif = new FacebookMessageGif(answer, senderID);
+      FacebookApiWrapper.postTofacebook(fbMsgGif.get());
     }
 }
