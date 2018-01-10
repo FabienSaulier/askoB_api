@@ -5,11 +5,11 @@ export default class FacebookMessageGif {
   }
 
   constructor(answer, recipientId) {
-    // construction des quickReplies
-    const quickReplies = [];
+    // construction des quick_replies
+    const quick_replies = [];
     if (answer.children) {
       answer.children.forEach((child) => {
-        quickReplies.push({
+        quick_replies.push({
           content_type: 'text',
           title: child.label,
           payload: child._id,
@@ -21,8 +21,8 @@ export default class FacebookMessageGif {
     const message = {}
 
     // On ne peut pas ajouter du text à un image, mais on peut mettre des quick replies
-    if (quickReplies.length > 0) {
-      message.quickReplies = quickReplies
+    if (quick_replies.length > 0) {
+      message.quick_replies = quick_replies
     }
 
     message.attachment = {

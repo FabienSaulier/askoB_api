@@ -5,11 +5,11 @@ export default class FacebookMessage {
   }
 
   constructor(answer, recipientId) {
-    // construction des quickReplies
-    const quickReplies = [];
+    // construction des quick_replies
+    const quick_replies = [];
     if (answer.children) {
       answer.children.forEach((child) => {
-        quickReplies.push({
+        quick_replies.push({
           content_type: 'text',
           title: child.label,
           payload: child._id,
@@ -20,11 +20,11 @@ export default class FacebookMessage {
     // construction du message
     const message = {}
 
-    if (quickReplies.length === 0) {
+    if (quick_replies.length === 0) {
       message.text = answer.text
     } else {
       message.text = answer.text
-      message.quickReplies = quickReplies
+      message.quick_replies = quick_replies
     }
 
     this.messageData = { recipient: { id: recipientId }, message }
