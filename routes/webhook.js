@@ -82,7 +82,6 @@ async function handleMessage(message, senderID) {
 
   // send message
   const fbMsg = new FacebookMessage(answer, senderID)
-  console.log(fbMsg.quick_replies)
   FacebookApiWrapper.postTofacebook(fbMsg.get())
   if (answer.gifId) {
     const fbMsgGif = new FacebookMessageGif(answer, senderID)
