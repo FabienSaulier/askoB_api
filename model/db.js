@@ -1,13 +1,14 @@
-import logger from '../lib/logger'
 import mongoose from 'mongoose'
 
-mongoose.Promise = global.Promise;
+import logger from '../lib/logger'
 
-mongoose.connect('mongodb://'+process.env.mongodbuser+':'+process.env.mongodbpassword+'@'+process.env.mongodburl, {useMongoClient: true});
-var db = mongoose.connection;
-db.on('error', function(error) {
-  logger.error('Connection error: %s', error);
-});
-db.once('open', function() {
-  logger.info("connected to db");
-});
+mongoose.Promise = global.Promise
+
+mongoose.connect(`mongodb://${process.env.mongodbuser}:${process.env.mongodbpassword}@${process.env.mongodburl}`, { useMongoClient: true })
+const db = mongoose.connection
+db.on('error', (error) => {
+  logger.error('Connection error: %s', error)
+})
+db.once('open', () => {
+  logger.info('connected to db')
+})

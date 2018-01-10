@@ -4,6 +4,7 @@ import * as Message from '../lib/message'
 import FacebookMessage from '../model/facebookMessage'
 import FacebookMessageGif from '../model/facebookMessageGif'
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
+import Answers from '../model/answer'
 
 /**
 * Facebook entries point
@@ -60,9 +61,17 @@ export default(server) => {
 
 async function handleMessage(message, senderID) {
   const msgData = await Message.analyseMessage(message)
-  let answer
+  let answer = {}
+
   if (msgData.payload) {
-    answer = await Message.getAnswerById(msgData.payload)
+    const payload = JSON.parse(msgData.payload)
+    if(payload.siblings){
+      answer = await Answers.findOneRandomByIntent('sibling')
+      answer.children = payload.siblings
+    } else{
+      answer = await Message.getAnswerById(payload.id)
+    }
+
   } else {
     const intent = msgData.intent()
     const entities = Message.getEntities(msgData)
@@ -73,6 +82,7 @@ async function handleMessage(message, senderID) {
 
   // send message
   const fbMsg = new FacebookMessage(answer, senderID)
+  console.log(fbMsg.quick_replies)
   FacebookApiWrapper.postTofacebook(fbMsg.get())
   if (answer.gifId) {
     const fbMsgGif = new FacebookMessageGif(answer, senderID)
