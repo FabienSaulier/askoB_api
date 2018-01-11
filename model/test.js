@@ -11,6 +11,9 @@ const TestSchema = new mongoose.Schema({
   answers_id: {
     type: [String],
   },
+  species: {
+    type: String,
+  },
 })
 
 const Tests = mongoose.models.tests || mongoose.model('tests', TestSchema)
