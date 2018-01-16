@@ -8,7 +8,7 @@ const TestSchema = new mongoose.Schema({
   tags: { // entivies, ent values
     type: [String],
   },
-  answers_id: {
+  answersId: {
     type: [String],
   },
   species: {

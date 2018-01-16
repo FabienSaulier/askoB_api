@@ -6,39 +6,27 @@ import Tests from '../model/test'
 import logger from '../lib/logger'
 
 export default(server) => {
-  /**
-  * Send an test
-  * */
-  server.get('/test/:id', (req, res) => {
-    const { id } = req.params
-    Tests.findOne({ _id: id })
+
+  // get all tests from a species
+  server.get('/test/:species', (req, res) => {
+    console.log("ghjkl")
+
+    const { species } = req.params
+    Tests.find({ species}).sort({ name: 1 })
       .then(
         (result) => {
           res.send(200, result)
         },
         (error) => {
-          logger.error(error)
+          logger.fatal(error)
         },
       )
-  })
-
-  /**
-  * Delete a test.
-  * */
-  server.del('/test/:id', (req, res, next) => {
-    const { id } = req.params
-    logger.info('Delete test %s ', id)
-    Tests.remove({ _id: id }, (err) => {
-      if (err) return logger.error(err)
-      res.send(200)
-      return next()
-    })
   })
 
   // Update and Create an test.
   server.put('/test/', (req, res, next) => {
     const inputTest = req.body
-    logger.info("sauvegarde d'un nouveau test", inputTest)
+    logger.debug("sauvegarde d'un nouveau test", inputTest)
     if (inputTest && inputTest._id) {
       Tests.update({ _id: inputTest._id }, inputTest, { runValidators: true }, (err) => {
         if (err) {
@@ -58,6 +46,19 @@ export default(server) => {
         return next()
       })
     }
+  })
+
+  /**
+  * Delete a test.
+  * */
+  server.del('/test/:id', (req, res, next) => {
+    const { id } = req.params
+    logger.info('Delete test %s ', id)
+    Tests.remove({ _id: id }, (err) => {
+      if (err) return logger.error(err)
+      res.send(200)
+      return next()
+    })
   })
 
   function buildErrorMsg(err) {
