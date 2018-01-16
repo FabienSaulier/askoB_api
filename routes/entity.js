@@ -30,19 +30,20 @@ export default(server) => {
       .catch(error => logger.error(error))
   })
 
-  server.put('/entities/', function(req, res, next){
-    const entities = req.body;
+  server.put('/entities/', (req, res) => {
+    const entities = req.body
     entities.forEach((entity) => {
-      Entities.update({ _id: entity._id }, { isFiltered: entity.isFiltered, areValuesPertinent: entity.areValuesPertinent },
-        function(err, answer){
-          if(err){
-            console.log(error)
-          } else{
+      Entities.update(
+        { _id: entity._id },
+        { isFiltered: entity.isFiltered, areValuesPertinent: entity.areValuesPertinent },
+        (err) => {
+          if (err) {
+            logger.error(err)
           }
-        }
-      );
+        },
+      )
     })
-  });
+  })
 
 
   // return entities who are present in recastEntities but not kanzi

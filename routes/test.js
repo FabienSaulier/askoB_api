@@ -1,18 +1,14 @@
 import flattenMongooseValidationError from 'flatten-mongoose-validation-error'
 import errs from 'restify-errors'
-import _ from 'lodash'
 
 import Tests from '../model/test'
 import logger from '../lib/logger'
 
 export default(server) => {
-
   // get all tests from a species
   server.get('/test/:species', (req, res) => {
-    console.log("ghjkl")
-
     const { species } = req.params
-    Tests.find({ species}).sort({ name: 1 })
+    Tests.find({ species }).sort({ name: 1 })
       .then(
         (result) => {
           res.send(200, result)

@@ -65,13 +65,12 @@ async function handleMessage(message, senderID) {
 
   if (msgData.payload) {
     const payload = JSON.parse(msgData.payload)
-    if(payload.siblings){
+    if (payload.siblings) {
       answer = await Answers.findOneRandomByIntent('sibling')
       answer.children = payload.siblings
-    } else{
+    } else {
       answer = await Message.getAnswerById(payload.id)
     }
-
   } else {
     const intent = msgData.intent()
     const entities = Message.getEntities(msgData)
