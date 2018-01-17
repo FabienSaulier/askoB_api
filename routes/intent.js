@@ -3,12 +3,12 @@ import logger from '../lib/logger'
 
 export default(server) => {
   /**
-  * Send all answers of a species.
+  * Send all general answers of a species
   * */
-  server.get('/species/:species', (req, res) => {
+  server.get('/generalitents/:species', (req, res) => {
     const { species } = req.params
-
-    Answers.find({ species }).sort({ name: 1 })
+    const generalIntents = ['greetings', 'goodbye']
+    Answers.find({ species, intent: { $in: generalIntents } })
       .then(
         (result) => {
           res.send(200, result)
@@ -19,13 +19,9 @@ export default(server) => {
       )
   })
 
-  /**
-  * Send all answers of a species corresponding to the intent.
-  * */
-  server.get('/species/:species/intent/:intent', (req, res) => {
-    const { species, intent } = req.params
-
-    Answers.find({ species, intent }).sort({ name: 1 })
+  server.get('/intent/:intent', (req, res) => {
+    const { intent } = req.params
+    Answers.find({ intent })
       .then(
         (result) => {
           res.send(200, result)
