@@ -18,7 +18,7 @@ describe('explose tests', () => {
   const resFirstExplosionABCD = [['B', 'C', 'D'], ['A', 'C', 'D'], ['A', 'B', 'D'], ['A', 'B', 'C']]
   const resSecondExplosionABCD = [['C', 'D'], ['B', 'D'], ['B', 'C'], ['A', 'D'], ['A', 'C'], ['A', 'B']]
 
-  describe('can expplose?', () => {
+  describe('can explose?', () => {
     it('canExploseEntities of array[array]', () => {
       expect(canExploseEntities(entititiesAndValuesABC)).to.equal(true)
     });
