@@ -90,8 +90,8 @@ async function handleMessage(message, senderID) {
     return;
   }
 
-
-  const msgData = await Message.analyseMessage(message)
+  const species = user.animals[0].species
+  const msgData = await Message.analyseMessage(message, species)
   let answer = {}
 
   if (msgData.payload) {
@@ -107,7 +107,7 @@ async function handleMessage(message, senderID) {
     const entities = Message.getEntities(msgData)
     const entitiesValues = await Message.getEntitiesValues(msgData)
     const entitiesAndValues = entities.concat(entitiesValues)
-    answer = await Message.findAnswer(intent, [entitiesAndValues])
+    answer = await Message.findAnswer(species, intent, [entitiesAndValues])
   }
 
   sendAnswer(answer, senderID)
