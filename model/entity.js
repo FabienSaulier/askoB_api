@@ -5,6 +5,9 @@ const EntitySchema = new mongoose.Schema({
     type: String,
     required: [true, 'Un id est nécessaire'],
   },
+  species: {
+    type: String,
+  },
   name: { // description utilise en interne
     type: String,
   },

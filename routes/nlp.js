@@ -7,12 +7,23 @@ export default(server) => {
   /**
   * get all entities
   * */
-  server.get('/nlp/entities', (req, res) => {
+  server.get('/nlp/entities/:species', (req, res) => {
+    const { species } = req.params
+    let botSlug = ''
+    let recastAccess = ''
+    if(species === 'chien'){
+      botSlug = config.RECAST_BOT_SLUG_CHIEN
+      recastAccess = config.RECAST_DEV_ACCESS_TOKEN_CHIEN
+    }else{
+      botSlug = config.RECAST_BOT_SLUG
+      recastAccess = config.RECAST_DEV_ACCESS_TOKEN
+    }
+    const nlpUrl =   `https://api.recast.ai/v2/users/${config.RECAST_USER_SLUG}/bots/${botSlug}/entities`
     axios.get(
-      `https://api.recast.ai/v2/users/${config.RECAST_USER_SLUG}/bots/${config.RECAST_BOT_SLUG}/entities`,
+    nlpUrl,
       {
         headers:
-          { Authorization: `Token ${config.RECAST_DEV_ACCESS_TOKEN}` },
+          { Authorization: `Token ${recastAccess}` },
       },
     )
       .then((response) => {
