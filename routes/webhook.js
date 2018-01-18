@@ -5,6 +5,7 @@ import FacebookMessage from '../model/facebookMessage'
 import FacebookMessageGif from '../model/facebookMessageGif'
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 import Answers from '../model/answer'
+import Users from '../model/user'
 
 /**
 * Facebook entries point
@@ -60,6 +61,36 @@ export default(server) => {
 }
 
 async function handleMessage(message, senderID) {
+
+//    await Users.update({senderID : senderID}, { $set: { "details.make": "zzz"}  } )
+  const ID_ANSWER_LAPIN = '5a608d838e9bc239cc09bcb5'
+  const ID_ANSWER_CHIEN = '5a608db68e9bc239cc09bcb6'
+
+  if(message.quick_reply){
+    const payload = JSON.parse(message.quick_reply.payload)
+    if(payload.id === ID_ANSWER_LAPIN){
+      console.log("add lapin")
+
+      await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "lapin"}  } )
+    }
+    if(payload.id === ID_ANSWER_CHIEN){
+      await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "chien"}  } )
+    }
+  }
+
+
+  const user = await Users.findOne({senderID : senderID})
+  const ANSWER_QUEL_ANIMAL_AS_TU = '5a608de58e9bc239cc09bcb7'
+  console.log(user)
+  if(!user){
+    await Users.create({senderID : senderID})
+    const answer = await Answers.findOne({_id:ANSWER_QUEL_ANIMAL_AS_TU})
+    console.log(answer)
+    sendAnswer(answer, senderID)
+    return;
+  }
+
+
   const msgData = await Message.analyseMessage(message)
   let answer = {}
 
@@ -79,7 +110,11 @@ async function handleMessage(message, senderID) {
     answer = await Message.findAnswer(intent, [entitiesAndValues])
   }
 
-  // send message
+  sendAnswer(answer, senderID)
+  return;
+}
+
+function sendAnswer(answer, senderID){
   const fbMsg = new FacebookMessage(answer, senderID)
   FacebookApiWrapper.postTofacebook(fbMsg.get())
   if (answer.gifId) {

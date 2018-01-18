@@ -14,7 +14,7 @@ const AnimalSchema = new mongoose.Schema({
 //WARNING  HACK il faudrait vérifier que le sender est correctement auth par facebook.
 // on peut faire un call /webhook avec des infos bidon et se faire passer un sender qu'on est pas.
 const UserSchema = new mongoose.Schema({
-  senderId: {
+  senderID: {
     type: String, // id facebook du sender
   },
   animals: {
@@ -23,9 +23,9 @@ const UserSchema = new mongoose.Schema({
 
 })
 
-AnswerSchema.plugin(timestamps)
-AnswerSchema.plugin(mongooseStringQuery)
-AnswerSchema.plugin(uniqueValidator) // for name but buggy when update
+UserSchema.plugin(timestamps)
+UserSchema.plugin(mongooseStringQuery)
+UserSchema.plugin(uniqueValidator) // for name but buggy when update
 
-const Users = mongoose.models.answers || mongoose.model('users', UserSchema)
+const Users = mongoose.models.users || mongoose.model('users', UserSchema)
 module.exports = Users
