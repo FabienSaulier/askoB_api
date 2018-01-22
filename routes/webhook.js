@@ -3,7 +3,6 @@ import logger from '../lib/logger'
 import * as Message from '../lib/message'
 import FacebookMessageText from '../model/FacebookMessageText'
 import FacebookMessageGif from '../model/FacebookMessageGif'
-import fbm from '../model/FacebookMessage'
 
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 import Answers from '../model/answer'
@@ -86,7 +85,7 @@ async function handleMessage(message, senderID) {
   // send the answer
   const fbmText = new FacebookMessageText(answer, senderID)
   FacebookApiWrapper.postTofacebook(fbmText.getMessage())
-  
+
   // if the answer has a gif: send the gif
   if (answer.gifId) {
     const fbmGif = new FacebookMessageGif(answer, senderID)
