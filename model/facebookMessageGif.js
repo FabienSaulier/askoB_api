@@ -1,4 +1,4 @@
-import FacebookMessage from './FacebookMessage'
+import FacebookMessage from './facebookMessage'
 
 export default class FacebookMessageGif extends FacebookMessage{
 
