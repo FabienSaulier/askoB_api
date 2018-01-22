@@ -1,8 +1,8 @@
 import config from '../config/config'
 import logger from '../lib/logger'
 import * as Message from '../lib/message'
-import FacebookMessageText from '../model/FacebookMessageText'
-import FacebookMessageGif from '../model/FacebookMessageGif'
+import FacebookMessageText from '../model/facebookMessageText'
+import FacebookMessageGif from '../model/facebookMessageGif'
 
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 import Answers from '../model/answer'
