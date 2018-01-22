@@ -34,16 +34,18 @@ export default class FacebookMessage {
       })
     }
 
+    const HOME_MENU_LAPIN_ID = '5a4f45d5ae8a73002c23e682'
+    quick_replies.push({
+      content_type: 'text',
+      title: '🏠',
+      payload: JSON.stringify({ id: HOME_MENU_LAPIN_ID }),
+    })
 
     // construction du message
     const message = {}
+    message.text = answer.text
+    if (quick_replies.length > 0) {message.quick_replies = quick_replies}
 
-    if (quick_replies.length === 0) {
-      message.text = answer.text
-    } else {
-      message.text = answer.text
-      message.quick_replies = quick_replies
-    }
     this.messageData = { recipient: { id: recipientId }, message }
   }
 }

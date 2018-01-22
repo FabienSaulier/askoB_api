@@ -34,13 +34,18 @@ export default class FacebookMessageGif {
       })
     }
 
+    const HOME_MENU_LAPIN_ID = '5a4f45d5ae8a73002c23e682'
+    quick_replies.push({
+      content_type: 'text',
+      title: '🏠',
+      payload: JSON.stringify({ id: HOME_MENU_LAPIN_ID }),
+    })
+
     // construction du message
     const message = {}
 
     // On ne peut pas ajouter du text à un image, mais on peut mettre des quick replies
-    if (quick_replies.length > 0) {
-      message.quick_replies = quick_replies
-    }
+    if (quick_replies.length > 0) {message.quick_replies = quick_replies}
 
     message.attachment = {
       type: 'image',
