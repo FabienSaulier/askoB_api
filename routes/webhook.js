@@ -45,6 +45,7 @@ export default(server) => {
             const senderID = event.sender.id
             FacebookApiWrapper.sendTypingOn(senderID)
             handleMessage(event.message, senderID)
+            FacebookApiWrapper.sendTypingOff(senderID)
           } else {
             // logger.info("message unknown: ",event);
           }
@@ -86,4 +87,5 @@ async function handleMessage(message, senderID) {
     const fbMsgGif = new FacebookMessageGif(answer, senderID)
     FacebookApiWrapper.postTofacebook(fbMsgGif.get())
   }
+  
 }
