@@ -1,8 +1,9 @@
 import config from '../config/config'
 import logger from '../lib/logger'
 import * as Message from '../lib/message'
-import FacebookMessage from '../model/facebookMessage'
+import FacebookMessageText from '../model/facebookMessageText'
 import FacebookMessageGif from '../model/facebookMessageGif'
+
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 import Answers from '../model/answer'
 
@@ -43,8 +44,10 @@ export default(server) => {
         entry.messaging.forEach((event) => {
           if (event.message && event.message.text) { // check if it is an Actual message
             const senderID = event.sender.id
+            FacebookApiWrapper.sendMarkSeen(senderID)
             FacebookApiWrapper.sendTypingOn(senderID)
             handleMessage(event.message, senderID)
+            FacebookApiWrapper.sendTypingOff(senderID)
           } else {
             // logger.info("message unknown: ",event);
           }
@@ -79,11 +82,16 @@ async function handleMessage(message, senderID) {
     answer = await Message.findAnswer(intent, [entitiesAndValues])
   }
 
-  // send message
-  const fbMsg = new FacebookMessage(answer, senderID)
-  FacebookApiWrapper.postTofacebook(fbMsg.get())
+
+  // send the answer
+  const fbmText = new FacebookMessageText(answer, senderID)
+  FacebookApiWrapper.postTofacebook(fbmText.getMessage())
+
+  // if the answer has a gif: send the gif
   if (answer.gifId) {
-    const fbMsgGif = new FacebookMessageGif(answer, senderID)
-    FacebookApiWrapper.postTofacebook(fbMsgGif.get())
+    const fbmGif = new FacebookMessageGif(answer, senderID)
+    FacebookApiWrapper.postTofacebook(fbmGif.getMessage())
   }
+
+
 }
