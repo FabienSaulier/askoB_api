@@ -44,8 +44,8 @@ export default(server) => {
         entry.messaging.forEach((event) => {
           if (event.message && event.message.text) { // check if it is an Actual message
             const senderID = event.sender.id
-        //    FacebookApiWrapper.sendTypingOn(senderID)
             FacebookApiWrapper.sendMarkSeen(senderID)
+            FacebookApiWrapper.sendTypingOn(senderID)
             handleMessage(event.message, senderID)
             FacebookApiWrapper.sendTypingOff(senderID)
           } else {
