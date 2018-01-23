@@ -9,22 +9,25 @@ import config from '../config/config'
 export default(server) => {
   // Look for entities at recast, if new, save them to Kanzi api
   // Then return the list of entities
-  server.get('/entities/', (req, res) => {
+  server.get('/entities/:species', (req, res) => {
+    const { species } = req.params
     let recastEntities = []
     let kanziSavedEntities = []
 
-    getRecastEntities()
+    getRecastEntities(species)
       .then((response) => {
         recastEntities = response.data.results
+        recastEntities.forEach(re => re.id = re.id.concat('_'+species))
         recastEntities = recastEntities.map(entity => _object.mapKeys(entity, (value, key) => (key === 'id' ? '_id' : key)))
-        return getKanziSavedEntities()
+        return getKanziSavedEntities(species)
       })
       .then((ent) => {
         kanziSavedEntities = ent
         const entitiesToSave = findDifferents(recastEntities, kanziSavedEntities)
+        entitiesToSave.forEach(e => e.species = species)
         return Entities.create(entitiesToSave)
       })
-      .then(() => getKanziSavedEntities())
+      .then(() => getKanziSavedEntities(species))
       .then(entities =>
         res.send(200, entities))
       .catch(error => logger.error(error))
@@ -58,13 +61,24 @@ export default(server) => {
     return diff
   }
 
-  function getRecastEntities() {
-    const url = `https://api.recast.ai/v2/users/${config.RECAST_USER_SLUG}/bots/${config.RECAST_BOT_SLUG}/entities`
-    const options = { headers: { Authorization: `Token ${config.RECAST_DEV_ACCESS_TOKEN}` } }
+  function getRecastEntities(species) {
+    let botSlug = ''
+    let recastAccess = ''
+    if(species === 'chien'){
+      botSlug = config.RECAST_BOT_SLUG_CHIEN
+      recastAccess = config.RECAST_DEV_ACCESS_TOKEN_CHIEN
+    }else{
+      botSlug = config.RECAST_BOT_SLUG
+      recastAccess = config.RECAST_DEV_ACCESS_TOKEN
+    }
+
+    const url = `https://api.recast.ai/v2/users/${config.RECAST_USER_SLUG}/bots/${botSlug}/entities`
+    console.log(url)
+    const options = { headers: { Authorization: `Token ${recastAccess}` } }
     return axios.get(url, options)
   }
 
-  function getKanziSavedEntities() {
-    return Entities.find()
+  function getKanziSavedEntities(species) {
+    return Entities.find({species:species})
   }
 }
