@@ -10,12 +10,13 @@ export default class FacebookMessage {
 
     this.populateQRWithChildren(answer)
     this.populateQRWithSiblings(answer)
+    if(this.hasVetButton(answer))
+      this.populateQRWithVetButton()
     this.populateQRWithHomeButton()
 
     this.addQuickReplies()
-
   }
-  
+
   getMessage() {
     this.messageData =  { recipient: { id: this.recipientId }, message: this.message }
     return this.messageData
@@ -58,6 +59,19 @@ export default class FacebookMessage {
       content_type: 'text',
       title: '🏠',
       payload: JSON.stringify({ id: HOME_MENU_LAPIN_ID }),
+    })
+  }
+
+  hasVetButton(answer) {
+    return answer.displayVetButton
+  }
+
+  populateQRWithVetButton(){
+    const HOME_MENU_PARLER_VETO_ID = '5a68b6777fb4053ae8ee546a'
+    this.quick_replies.push({
+      content_type: 'text',
+      title: 'Contacter véto 👩‍⚕️',
+      payload: JSON.stringify({ id: HOME_MENU_PARLER_VETO_ID }),
     })
   }
 
