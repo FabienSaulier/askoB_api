@@ -34,6 +34,10 @@ const AnswerSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  displayVetButton: {
+    type: Boolean,
+    default: false,
+  },
   species: {
     type: String,
     required: [true, 'Une species est nécessaire'],
