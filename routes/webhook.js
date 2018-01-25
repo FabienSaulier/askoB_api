@@ -44,7 +44,7 @@ export default(server) => {
         entry.messaging.forEach( async (event) => {
           if (event.message && event.message.text) { // check if it is an Actual message
             const senderID = event.sender.id
-            FacebookApiWrapper.sendMarkSeen(senderID)
+        //    FacebookApiWrapper.sendMarkSeen(senderID)
             await FacebookApiWrapper.sendTypingOn(senderID)
             await handleMessage(event.message, senderID)
             FacebookApiWrapper.sendTypingOff(senderID)
@@ -101,7 +101,7 @@ async function handleMessage(message, senderID) {
 /**
  * incrementAnswerDisplayCount
  *
- * @param  {String} answerId answer to increment 
+ * @param  {String} answerId answer to increment
  */
 function incrementAnswerDisplayCount(answerId){
   Answers.update({_id: answerId}, { $inc: { displayCount: 1} } )
