@@ -41,20 +41,22 @@ export default(server) => {
         }
 
         // Iterate over each messaging event
-        entry.messaging.forEach((event) => {
+        entry.messaging.forEach( async (event) => {
           if (event.message && event.message.text) { // check if it is an Actual message
             const senderID = event.sender.id
             FacebookApiWrapper.sendMarkSeen(senderID)
-            FacebookApiWrapper.sendTypingOn(senderID)
-            handleMessage(event.message, senderID)
+            await FacebookApiWrapper.sendTypingOn(senderID)
+            await handleMessage(event.message, senderID)
             FacebookApiWrapper.sendTypingOff(senderID)
           } else {
             // logger.info("message unknown: ",event);
           }
         })
+
+        // Assume all went well. Send 200, otherwise, the request will time out and will be resent
+        res.send(200)
       })
-      // Assume all went well. Send 200, otherwise, the request will time out and will be resent
-      res.send(200)
+
     } else {
       logger.warn('received a non page data: ', data.object)
       logger.warn('data: ', data)
@@ -81,7 +83,6 @@ async function handleMessage(message, senderID) {
     const entitiesAndValues = entities.concat(entitiesValues)
     answer = await Message.findAnswer(intent, [entitiesAndValues])
   }
-
 
   // send the answer
   const fbmText = new FacebookMessageText(answer, senderID)
