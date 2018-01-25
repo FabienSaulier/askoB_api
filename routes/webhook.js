@@ -84,6 +84,8 @@ async function handleMessage(message, senderID) {
     answer = await Message.findAnswer(intent, [entitiesAndValues])
   }
 
+  incrementAnswerDisplayCount(answer._id)
+
   // send the answer
   const fbmText = new FacebookMessageText(answer, senderID)
   FacebookApiWrapper.postTofacebook(fbmText.getMessage())
@@ -93,6 +95,22 @@ async function handleMessage(message, senderID) {
     const fbmGif = new FacebookMessageGif(answer, senderID)
     FacebookApiWrapper.postTofacebook(fbmGif.getMessage())
   }
+}
 
 
+/**
+ * incrementAnswerDisplayCount
+ *
+ * @param  {String} answerId answer to increment 
+ */
+function incrementAnswerDisplayCount(answerId){
+  Answers.update({_id: answerId}, { $inc: { displayCount: 1} } )
+  .then(
+    (result) => {
+      // ok
+    },
+    (error) => {
+      logger.error(error)
+    },
+  )
 }

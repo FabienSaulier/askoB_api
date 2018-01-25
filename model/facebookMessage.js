@@ -1,3 +1,6 @@
+import Answers from './answer'
+
+const HOME_MENU_PARLER_VETO_ID = '5a68b6777fb4053ae8ee546a'
 
 export default class FacebookMessage {
 
@@ -10,8 +13,11 @@ export default class FacebookMessage {
 
     this.populateQRWithChildren(answer)
     this.populateQRWithSiblings(answer)
-    if(this.hasVetButton(answer))
+    if(this.hasVetButton(answer)){
       this.populateQRWithVetButton()
+      this.incrementVetButtonAnswerDisplayCount()
+    }
+
     this.populateQRWithHomeButton()
 
     this.addQuickReplies()
@@ -67,12 +73,23 @@ export default class FacebookMessage {
   }
 
   populateQRWithVetButton(){
-    const HOME_MENU_PARLER_VETO_ID = '5a68b6777fb4053ae8ee546a'
     this.quick_replies.push({
       content_type: 'text',
       title: 'Contacter véto 👩‍⚕️',
       payload: JSON.stringify({ id: HOME_MENU_PARLER_VETO_ID }),
     })
+  }
+
+  incrementVetButtonAnswerDisplayCount(){
+    Answers.update({_id: HOME_MENU_PARLER_VETO_ID}, { $inc: { displayButtonCount: 1} } )
+    .then(
+      (result) => {
+        //ok
+      },
+      (error) => {
+        logger.error(error)
+      },
+    )
   }
 
   addQuickReplies(){

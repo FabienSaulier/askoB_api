@@ -38,6 +38,16 @@ const AnswerSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  // counter, how many time the Quick Reply of this answer was displayed
+  displayButtonCount: {
+    type: Number,
+    default: 0,
+  },
+  // counter, how many time the
+  displayCount: {
+    type: Number,
+    default: 0,
+  },
   species: {
     type: String,
     required: [true, 'Une species est nécessaire'],
