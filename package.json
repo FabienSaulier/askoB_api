@@ -4,8 +4,7 @@
   "description": "api de Kanzi",
   "scripts": {
     "start": "nodemon server.js --exec babel-node --presets es2015,stage-2",
-    "testz": "mocha --watch --require babel-register --require babel-polyfill",
-    "test":  " karma start karma.conf.js"
+    "test": "mocha --watch --require babel-register --require babel-polyfill"
   },
   "dependencies": {
     "axios": "^0.17.1",
@@ -15,8 +14,6 @@
     "chai": "^4.1.2",
     "dotenv": "^4.0.0",
     "flatten-mongoose-validation-error": "^1.0.1",
-    "karma": "^2.0.0",
-    "karma-mocha": "^1.3.0",
     "lodash": "^4.17.4",
     "log4js": "^2.4.1",
     "mocha": "^4.1.0",

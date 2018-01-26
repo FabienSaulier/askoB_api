@@ -3,7 +3,6 @@ import errs from 'restify-errors'
 
 import Tests from '../model/test'
 import logger from '../lib/logger'
-import karma from 'karma'
 
 export default(server) => {
   // get all tests from a species
@@ -19,32 +18,6 @@ export default(server) => {
         },
       )
   })
-
-  server.get('/test/:species/launch', (req, res) => {
-
-
-    var Server = karma.Server
-    var server = new Server({port: 9876}, function(exitCode) {
-
-      if (!exitCode) {
-  console.log('\tTests ran successfully.\n');
-  // rerun with a different configuration
-  next();
-} else {
-  // just exit with the error code
-  next(exitCode);
-}
-
-console.log('Karma has exited with ' + exitCode)
-process.exit(exitCode)
-
-    })
-
-    server.start()
-    res.send(200)
-
-  })
-
 
   // Update and Create an test.
   server.put('/test/', (req, res, next) => {
