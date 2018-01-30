@@ -84,7 +84,7 @@ async function handleMessage(message, senderID) {
     const answers = await Message.findAnswer(intent, [entitiesAndValues])
 
     if(answers.length && answers.length > 1)
-      answer = this.buildAnswerWithQuickReplies(answers)
+      answer = buildAnswerWithQuickReplies(answers)
     else
       answer = answers
   }
