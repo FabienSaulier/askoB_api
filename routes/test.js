@@ -28,7 +28,7 @@ export default(server) => {
     let { userInput } = req.params
     const result = await Message.analyseMessage({text:userInput})
     const entitiesAndValues = await extractTags(result)
-    Message.findAnswer(result.intent(), entitiesAndValues)
+    Message.findAnswer(result.intent(), [entitiesAndValues])
     .then(
       (answer) => {
         res.send(200, answer)
