@@ -84,11 +84,11 @@ async function handleMessage(message, senderID) {
     const answers = await Message.findAnswer(intent, [entitiesAndValues])
 
     if(answers.length && answers.length > 1)
-      answer = buildAnswerWithQuickReplies(answers)
+      answer = await buildAnswerWithQuickReplies(answers)
     else
       answer = answers
   }
-
+  
   incrementAnswerDisplayCount(answer._id)
 
   // send the answer
