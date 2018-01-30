@@ -81,7 +81,12 @@ async function handleMessage(message, senderID) {
     const entities = Message.getEntities(msgData)
     const entitiesValues = await Message.getEntitiesValues(msgData)
     const entitiesAndValues = entities.concat(entitiesValues)
-    answer = await Message.findAnswer(intent, [entitiesAndValues])
+    const answers = await Message.findAnswer(intent, [entitiesAndValues])
+
+    if(answers.length && answers.length > 1)
+      answer = this.buildAnswerWithQuickReplies(answers)
+    else
+      answer = answers
   }
 
   incrementAnswerDisplayCount(answer._id)
@@ -97,6 +102,26 @@ async function handleMessage(message, senderID) {
   }
 }
 
+/**
+ * buildAnswerWithQuickReplies - build a multiplematch answer with quick replies
+ *
+ * @param  {} answers a list of answers
+ * @return {}         an answer with quickreplies
+ */
+async function buildAnswerWithQuickReplies(answers) {
+  const qrAnswer = await Answers.findOneRandomByIntent('multipleMatch')
+  const answerWithQR = {
+    text: qrAnswer.text,
+    children: [],
+  }
+  answers.forEach((answer) => {
+    answerWithQR.children.push({
+      label: answer.quickReplyLabel ? answer.quickReplyLabel : answer.name,
+      _id: answer._id,
+    })
+  })
+  return answerWithQR
+}
 
 /**
  * incrementAnswerDisplayCount

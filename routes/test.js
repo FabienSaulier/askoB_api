@@ -3,10 +3,50 @@ import errs from 'restify-errors'
 
 import Tests from '../model/test'
 import logger from '../lib/logger'
+import * as Message from '../lib/message'
 
 export default(server) => {
+
+  server.get('/test/analyse/:userInput', (req, res) => {
+    const { userInput } = req.params
+    Message.analyseMessage({text:userInput})
+    .then(
+      async (result) => {
+        const intent = result.intent()
+        const entities = Message.getEntities(result)
+        const entitiesValues = await Message.getEntitiesValues(result)
+        const entitiesAndValues = entities.concat(entitiesValues)
+        res.send(200, entitiesAndValues)
+      },
+      (error) => {
+        logger.fatal(error)
+      },
+    )
+  })
+
+  server.get('/test/findanswer/:userInput', async (req, res) => {
+    let { userInput } = req.params
+    const result = await Message.analyseMessage({text:userInput})
+    const entitiesAndValues = await extractTags(result)
+    Message.findAnswer(result.intent(), entitiesAndValues)
+    .then(
+      (answer) => {
+        res.send(200, answer)
+      },
+      (error) => {
+        logger.fatal(error)
+      },
+    )
+  })
+
+  async function extractTags(recastData){
+    const entities = Message.getEntities(recastData)
+    const entitiesValues = await Message.getEntitiesValues(recastData)
+    return entities.concat(entitiesValues)
+  }
+
   // get all tests from a species
-  server.get('/test/:species', (req, res) => {
+  server.get('/test/species/:species', (req, res) => {
     const { species } = req.params
     Tests.find({ species }).sort({ name: 1 })
       .then(
