@@ -60,37 +60,25 @@ export default(server) => {
   })
 }
 
+
 async function handleMessage(message, senderID) {
 
-//    await Users.update({senderID : senderID}, { $set: { "details.make": "zzz"}  } )
-  const ID_ANSWER_LAPIN = '5a608d838e9bc239cc09bcb5'
-  const ID_ANSWER_CHIEN = '5a608db68e9bc239cc09bcb6'
 
-  if(message.quick_reply){
-    const payload = JSON.parse(message.quick_reply.payload)
-    if(payload.id === ID_ANSWER_LAPIN){
-      console.log("add lapin")
+/*
+  updateUserAnimal(message, senderID)
 
-      await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "lapin"}  } )
-    }
-    if(payload.id === ID_ANSWER_CHIEN){
-      await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "chien"}  } )
-    }
-  }
-
-
-  const user = await Users.findOne({senderID : senderID})
-  const ANSWER_QUEL_ANIMAL_AS_TU = '5a608de58e9bc239cc09bcb7'
-  console.log(user)
-  if(!user){
-    await Users.create({senderID : senderID})
+  if(! await doesUserExist(senderID)){
+    await Users.create({senderID : senderID}) // await pas nécessaire
+    const ANSWER_QUEL_ANIMAL_AS_TU = '5a608de58e9bc239cc09bcb7'
     const answer = await Answers.findOne({_id:ANSWER_QUEL_ANIMAL_AS_TU})
-    console.log(answer)
     sendAnswer(answer, senderID)
     return;
   }
 
-  const species = user.animals[0].species
+  */
+
+
+  const species = 'lapin' // user.animals[0].species
   const msgData = await Message.analyseMessage(message, species)
   let answer = {}
 
@@ -121,4 +109,24 @@ function sendAnswer(answer, senderID){
     const fbMsgGif = new FacebookMessageGif(answer, senderID)
     FacebookApiWrapper.postTofacebook(fbMsgGif.get())
   }
+}
+
+async function updateUserAnimal(message, senderID){
+  const ID_ANSWER_LAPIN = '5a608d838e9bc239cc09bcb5'
+  const ID_ANSWER_CHIEN = '5a85e7f78588b2002c5cb70a'
+
+  if(message.quick_reply){
+    const payload = JSON.parse(message.quick_reply.payload)
+    if(payload.id === ID_ANSWER_LAPIN){
+      await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "lapin"}  } )
+    }
+    if(payload.id === ID_ANSWER_CHIEN){
+      await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "chien"}  } )
+    }
+  }
+}
+
+async function doesUserExist(senderID){
+  const user = await Users.findOne({senderID : senderID})
+  return user
 }
