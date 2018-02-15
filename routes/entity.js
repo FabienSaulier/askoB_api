@@ -18,6 +18,7 @@ export default(server) => {
       .then((response) => {
         recastEntities = response.data.results
         recastEntities.forEach(re => re.id = re.id.concat('_'+species))
+        console.log("recastEntities", recastEntities)
         recastEntities = recastEntities.map(entity => _object.mapKeys(entity, (value, key) => (key === 'id' ? '_id' : key)))
         return getKanziSavedEntities(species)
       })
