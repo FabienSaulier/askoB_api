@@ -7,9 +7,10 @@ import * as Message from '../lib/message'
 
 export default(server) => {
 
-  server.get('/test/analyse/:userInput', (req, res) => {
+  server.get('/test/:species/analyse/:userInput', (req, res) => {
     const { userInput } = req.params
-    Message.analyseMessage({text:userInput})
+    const { species } = req.params
+    Message.analyseMessage({text:userInput}, species)
     .then(
       async (result) => {
         const intent = result.intent()
@@ -24,11 +25,12 @@ export default(server) => {
     )
   })
 
-  server.get('/test/findanswer/:userInput', async (req, res) => {
+  server.get('/test/:species/findanswer/:userInput', async (req, res) => {
     let { userInput } = req.params
-    const result = await Message.analyseMessage({text:userInput})
-    const entitiesAndValues = await extractTags(result)
-    Message.findAnswer(result.intent(), [entitiesAndValues])
+    const { species } = req.params
+    const result = await Message.analyseMessage({text:userInput}, species)
+    const entitiesAndValues = await extractTags(result, species)
+    Message.findAnswer(species, result.intent(), [entitiesAndValues])
     .then(
       (answer) => {
         res.send(200, answer)
@@ -39,9 +41,9 @@ export default(server) => {
     )
   })
 
-  async function extractTags(recastData){
+  async function extractTags(recastData, species){
     const entities = Message.getEntities(recastData)
-    const entitiesValues = await Message.getEntitiesValues(recastData)
+    const entitiesValues = await Message.getEntitiesValues(recastData, species)
     return entities.concat(entitiesValues)
   }
 
