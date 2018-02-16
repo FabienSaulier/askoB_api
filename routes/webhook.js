@@ -66,22 +66,19 @@ export default(server) => {
 }
 
 async function handleMessage(message, senderID) {
-  /*
-    updateUserAnimal(message, senderID)
-    if(! await doesUserExist(senderID)){
-      await Users.create({senderID : senderID}) // await pas nécessaire
-      const ANSWER_QUEL_ANIMAL_AS_TU = '5a608de58e9bc239cc09bcb7'
-      const answer = await Answers.findOne({_id:ANSWER_QUEL_ANIMAL_AS_TU})
-      sendAnswer(answer, senderID)
-      return;
-    }
-    */
 
+  await updateUserAnimal(message, senderID)
+  const user = await getUser(senderID)
+  if(!user || !user.animals[0]){
+    const ANSWER_QUEL_ANIMAL_AS_TU = '5a608de58e9bc239cc09bcb7'
+    const answer = await Answers.findOne({_id:ANSWER_QUEL_ANIMAL_AS_TU})
+    sendAnswer(answer, senderID)
+    return;
+  }
 
-  const species = 'lapin' // user.animals[0].species
+  const species = user.animals[0].species
   const msgData = await Message.analyseMessage(message, species)
   let answer = {}
-
 
   if (msgData.payload) {
     const payload = JSON.parse(msgData.payload)
@@ -157,4 +154,32 @@ function incrementAnswerDisplayCount(answerId){
       logger.error(error)
     },
   )
+}
+
+async function updateUserAnimal(message, senderID){
+  const ID_ANSWER_LAPIN = '5a608d838e9bc239cc09bcb5'
+  const ID_ANSWER_CHIEN = '5a86d1d08588b2002c5cb70b'
+
+  if(message.quick_reply){
+    const payload = JSON.parse(message.quick_reply.payload)
+    console.log(payload.id)
+
+    if(payload.id === ID_ANSWER_LAPIN){
+      console.log("update lapin")
+      await Users.create({senderID : senderID, 'animals.0.species' : "lapin"}) // await pas nécessaire
+
+//      await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "lapin"}  } )
+    }
+    if(payload.id === ID_ANSWER_CHIEN){
+      console.log("update chien")
+      await Users.create({senderID : senderID, 'animals.0.species' : "chien"}) // await pas nécessaire
+
+  //    await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "chien"}  } )
+    }
+  }
+}
+
+async function getUser(senderID){
+  const user = await Users.findOne({senderID : senderID})
+  return user
 }
