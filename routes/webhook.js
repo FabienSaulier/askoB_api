@@ -67,6 +67,7 @@ export default(server) => {
 
 async function handleMessage(message, senderID) {
 
+/*
   await updateUserAnimal(message, senderID)
   const user = await getUser(senderID)
   if(!user || !user.animals[0]){
@@ -75,8 +76,9 @@ async function handleMessage(message, senderID) {
     sendAnswer(answer, senderID)
     return;
   }
+  */
 
-  const species = user.animals[0].species
+  const species = 'lapin'//user.animals[0].species
   const msgData = await Message.analyseMessage(message, species)
   let answer = {}
 
