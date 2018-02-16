@@ -94,7 +94,7 @@ async function handleMessage(message, senderID) {
   } else {
     const intent = msgData.intent()
     const entities = Message.getEntities(msgData)
-    const entitiesValues = await Message.getEntitiesValues(msgData)
+    const entitiesValues = await Message.getEntitiesValues(msgData, species)
     const entitiesAndValues = entities.concat(entitiesValues)
     const answers = await Message.findAnswer(species, intent, [entitiesAndValues])
 
