@@ -1,7 +1,7 @@
 import config from '../config/config'
 import logger from '../lib/logger'
 import * as Message from '../lib/message'
-import FacebookMessage from '../model/facebookMessage'
+import FacebookMessageText from '../model/FacebookMessageText'
 import FacebookMessageGif from '../model/facebookMessageGif'
 
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
@@ -102,13 +102,12 @@ async function handleMessage(message, senderID) {
   }
 
   incrementAnswerDisplayCount(answer._id)
-
   sendAnswer(answer, senderID)
   return
 }
 
 function sendAnswer(answer, senderID){
-  const fbMsg = new FacebookMessage(answer, senderID)
+  const fbMsg = new FacebookMessageText(answer, senderID)
   FacebookApiWrapper.postTofacebook(fbMsg.getMessage())
   if (answer.gifId) {
     const fbMsgGif = new FacebookMessageGif(answer, senderID)
@@ -162,19 +161,11 @@ async function updateUserAnimal(message, senderID){
 
   if(message.quick_reply){
     const payload = JSON.parse(message.quick_reply.payload)
-    console.log(payload.id)
-
     if(payload.id === ID_ANSWER_LAPIN){
-      console.log("update lapin")
       await Users.create({senderID : senderID, 'animals.0.species' : "lapin"}) // await pas nécessaire
-
-//      await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "lapin"}  } )
     }
     if(payload.id === ID_ANSWER_CHIEN){
-      console.log("update chien")
       await Users.create({senderID : senderID, 'animals.0.species' : "chien"}) // await pas nécessaire
-
-  //    await Users.update({senderID : senderID}, { $set: { 'animals.0.species' : "chien"}  } )
     }
   }
 }

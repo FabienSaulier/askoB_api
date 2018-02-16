@@ -20,7 +20,6 @@ export default class FacebookMessage {
 
     this.populateQRWithHomeButton()
 
-    this.message.text = answer.text
     this.addQuickReplies()
   }
 
