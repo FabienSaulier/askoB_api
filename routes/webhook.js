@@ -1,11 +1,12 @@
 import config from '../config/config'
 import logger from '../lib/logger'
 import * as Message from '../lib/message'
-import FacebookMessageText from '../model/facebookMessageText'
+import FacebookMessage from '../model/facebookMessage'
 import FacebookMessageGif from '../model/facebookMessageGif'
 
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 import Answers from '../model/answer'
+import Users from '../model/user'
 
 /**
 * Facebook entries point
@@ -65,8 +66,22 @@ export default(server) => {
 }
 
 async function handleMessage(message, senderID) {
-  const msgData = await Message.analyseMessage(message)
+  /*
+    updateUserAnimal(message, senderID)
+    if(! await doesUserExist(senderID)){
+      await Users.create({senderID : senderID}) // await pas nécessaire
+      const ANSWER_QUEL_ANIMAL_AS_TU = '5a608de58e9bc239cc09bcb7'
+      const answer = await Answers.findOne({_id:ANSWER_QUEL_ANIMAL_AS_TU})
+      sendAnswer(answer, senderID)
+      return;
+    }
+    */
+
+
+  const species = 'lapin' // user.animals[0].species
+  const msgData = await Message.analyseMessage(message, species)
   let answer = {}
+
 
   if (msgData.payload) {
     const payload = JSON.parse(msgData.payload)
@@ -81,28 +96,32 @@ async function handleMessage(message, senderID) {
     const entities = Message.getEntities(msgData)
     const entitiesValues = await Message.getEntitiesValues(msgData)
     const entitiesAndValues = entities.concat(entitiesValues)
-    const answers = await Message.findAnswer(intent, [entitiesAndValues])
+    const answers = await Message.findAnswer(species, intent, [entitiesAndValues])
 
     if(answers.length && answers.length > 1)
       answer = await buildAnswerWithQuickReplies(answers)
     else
       answer = answers
   }
-  
+
   incrementAnswerDisplayCount(answer._id)
 
-  // send the answer
-  const fbmText = new FacebookMessageText(answer, senderID)
-  FacebookApiWrapper.postTofacebook(fbmText.getMessage())
+  sendAnswer(answer, senderID)
+  return
+}
 
-  // if the answer has a gif: send the gif
+function sendAnswer(answer, senderID){
+  const fbMsg = new FacebookMessage(answer, senderID)
+  FacebookApiWrapper.postTofacebook(fbMsg.getMessage())
   if (answer.gifId) {
-    const fbmGif = new FacebookMessageGif(answer, senderID)
-    FacebookApiWrapper.postTofacebook(fbmGif.getMessage())
+    const fbMsgGif = new FacebookMessageGif(answer, senderID)
+    FacebookApiWrapper.postTofacebook(fbMsgGif.getMessage())
   }
 }
 
+
 /**
+TODO a del ??????
  * buildAnswerWithQuickReplies - build a multiplematch answer with quick replies
  *
  * @param  {} answers a list of answers
