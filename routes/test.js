@@ -66,21 +66,21 @@ export default(server) => {
     const inputTest = req.body
     logger.debug("sauvegarde d'un nouveau test", inputTest)
     if (inputTest && inputTest._id) {
-      Tests.update({ _id: inputTest._id }, inputTest, { runValidators: true }, (err) => {
+      Tests.update({ _id: inputTest._id }, inputTest, { runValidators: true }, (err, test) => {
         if (err) {
           res.send(buildErrorMsg(err))
           return next()
         }
-        res.send(200)
+        res.send(test)
         return next()
       })
     } else {
-      Tests.create(inputTest, (err) => {
+      Tests.create(inputTest, (err, test) => {
         if (err) {
           res.send(buildErrorMsg(err))
           return next()
         }
-        res.send(200)
+        res.send(test)
         return next()
       })
     }
