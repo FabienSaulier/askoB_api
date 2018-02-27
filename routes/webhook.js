@@ -78,7 +78,7 @@ async function handleMessage(message, senderID) {
   }
   */
 
-  const species = 'lapin'//user.animals[0].species
+  const species = 'feeleat'//user.animals[0].species
   const msgData = await Message.analyseMessage(message, species)
   let answer = {}
 
