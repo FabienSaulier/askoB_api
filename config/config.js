@@ -11,6 +11,7 @@ module.exports = {
   FB_VERIFY_TOKEN: process.env.facebook_verify_token,
   FB_MESSAGE_URL: 'https://graph.facebook.com/v2.6/me/messages?access_token=',
   FB_BASE_URL: 'https://graph.facebook.com/v2.6/',
+  G_TRANSLATE_API_KEY: process.env.G_TRANSLATE_API_KEY,
   RECAST_DEV_ACCESS_TOKEN: process.env.RECAST_DEV_ACCESS_TOKEN,
   RECAST_DEV_ACCESS_TOKEN_CHIEN: process.env.RECAST_DEV_ACCESS_TOKEN_CHIEN,
   RECAST_USER_SLUG: process.env.RECAST_USER_SLUG,
