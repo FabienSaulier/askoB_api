@@ -11,8 +11,8 @@ import Users from '../model/user'
 /**
 * Facebook entries point
 * */
-
 export default(server) => {
+
   /**
   * Method for api validation purpose
   * */
@@ -124,6 +124,7 @@ TODO a del ??????
  * @return {}         an answer with quickreplies
  */
 async function buildAnswerWithQuickReplies(answers) {
+  console.log("buildAnswerWithQuickReplies")
   const qrAnswer = await Answers.findOneRandomByIntent('multipleMatch')
   const answerWithQR = {
     text: qrAnswer.text,
