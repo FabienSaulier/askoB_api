@@ -9,6 +9,9 @@ const AnimalSchema = new mongoose.Schema({
   name: {
     type: String,
   },
+  weight : {
+    type: Number,
+  },
   age_greater_12: {
     type: Boolean
   },

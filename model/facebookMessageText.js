@@ -12,13 +12,12 @@ export default class FacebookMessageText extends FacebookMessage {
     const pattern = /[%]\S+[%]/    // les mots avec %xxx%
     const regexp = new RegExp(pattern);
     const res = text.match(regexp, 'g')
-
     if(res){
-      const strToReplace = res[0]
-      const prop = res[0].replace(/%/g, '')  //remove all %
-      console.log(strToReplace)
-      console.log(prop)
-      text = text.replace(strToReplace,_.get(user,prop) )
+      let strToReplace = res[0]
+      const prop = res[0].replace(/%/g, '')  // with regexp remove all %
+      strToReplace = _.escapeRegExp(strToReplace)
+      const regexp = new RegExp(strToReplace, 'g');
+      text = text.replace(regexp,_.get(user,prop) )
     }
     return text
   }
