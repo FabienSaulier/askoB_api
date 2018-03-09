@@ -9,7 +9,10 @@ const AnimalSchema = new mongoose.Schema({
   name: {
     type: String,
   },
-  weight : {
+  weight: {
+    type: Number,
+  },
+  owner_plus_animal_weight: {
     type: Number,
   },
   age_greater_12: {
@@ -43,6 +46,9 @@ const UserSchema = new mongoose.Schema({
   },
   question_species: {
     type: String,
+  },
+  weight: {
+    type: Number
   },
   animals: {
     type: [AnimalSchema],
