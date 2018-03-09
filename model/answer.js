@@ -19,7 +19,7 @@ const SubAnswerSchema = new mongoose.Schema({
   },
 })
 
-const AnswerSchema = new mongoose.Schema({
+export const AnswerSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Un name est nécessaire'],
@@ -67,6 +67,12 @@ const AnswerSchema = new mongoose.Schema({
   },
   gifId: {
     type: String,
+  },
+  expectedBehaviour: {
+    type: String,
+  },
+  nextAnswer: { // id, only in case of expexted Behaviour
+    type: String
   },
   children: {
     type: [SubAnswerSchema],

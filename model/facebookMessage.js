@@ -4,11 +4,11 @@ const HOME_MENU_PARLER_VETO_ID = '5a68b6777fb4053ae8ee546a'
 
 export default class FacebookMessage {
 
-  constructor(answer, recipientId) {
+  constructor(answer, user) {
 
     // these are attributes name awaited by facebook
     this.quick_replies = []
-    this.recipientId = recipientId
+    this.recipientId = user.senderID
     this.message = {}
 
     this.populateQRWithChildren(answer)

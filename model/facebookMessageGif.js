@@ -2,8 +2,8 @@ import FacebookMessage from './facebookMessage'
 
 export default class FacebookMessageGif extends FacebookMessage{
 
-  constructor(answer, recipientId) {
-    super(answer, recipientId)
+  constructor(answer, user) {
+    super(answer, user)
     this.message.attachment = {
       type: 'image',
       payload: {

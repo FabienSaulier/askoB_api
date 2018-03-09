@@ -1,12 +1,12 @@
 import config from '../config/config'
 import logger from '../lib/logger'
 import * as Message from '../lib/message'
-import FacebookMessageText from '../model/facebookMessageText'
-import FacebookMessageGif from '../model/facebookMessageGif'
 
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
+import * as MessageHandler from '../lib/messageHandler'
 import Answers from '../model/answer'
 import Users from '../model/user'
+import * as Behaviour from '../lib/behaviour'
 
 /**
 * Facebook entries point
@@ -31,7 +31,6 @@ export default(server) => {
   * */
   server.post('/webhook', (req, res) => {
     const data = req.body
-
     // Make sure this is a page subscription
     if (data.object === 'page') {
       // Iterate over each entry - there may be multiple if batched
@@ -43,15 +42,54 @@ export default(server) => {
 
         // Iterate over each messaging event
         entry.messaging.forEach( async (event) => {
-          if (event.message && event.message.text) { // check if it is an Actual message
-            const senderID = event.sender.id
-        //    FacebookApiWrapper.sendMarkSeen(senderID)
+
+          const senderID = event.sender.id
+          let user = await getUserInfos(senderID)
+
+          let answer = undefined
+          // handle postback
+          if(event.postback){
+            logger.info(user)
             await FacebookApiWrapper.sendTypingOn(senderID)
-            await handleMessage(event.message, senderID)
+            answer = await Answers.findOne({_id:event.postback.payload})
+
+            MessageHandler.handleSpecificUserActions(event, user)
+
+            MessageHandler.sendAnswer(answer, user)
+            Users.setLastAnswer(user, answer)
             FacebookApiWrapper.sendTypingOff(senderID)
-          } else {
-            // logger.info("message unknown: ",event);
+            return
           }
+
+          else if (event.message && event.message.text) { // check if it is an Actual message
+            logger.info(user)
+            await FacebookApiWrapper.sendTypingOn(senderID)
+
+            if(user.last_answer.expectedBehaviour){
+
+
+              await Behaviour.runBehaviour(user.last_answer.expectedBehaviour, user, event.message.text)
+              // refresh user for new informtions
+              user = await getUserInfos(senderID)
+              answer = await Answers.findOne({_id: user.last_answer.nextAnswer})
+              MessageHandler.sendAnswer(answer, user)
+
+            } else{
+              answer = await MessageHandler.getAndBuildAnswer(event.message, user)
+              MessageHandler.sendAnswer(answer, user)
+            }
+            Users.setLastAnswer(user, answer)
+            FacebookApiWrapper.sendTypingOff(senderID)
+          }
+
+          else if (event.delivery) {
+              // do nothing
+          }
+
+          else {
+            logger.warn("message unknown: ",event);
+          }
+
         })
 
         // Assume all went well. Send 200, otherwise, the request will time out and will be resent
@@ -65,113 +103,12 @@ export default(server) => {
   })
 }
 
-async function handleMessage(message, senderID) {
-
-  await updateUserAnimal(message, senderID)
-  const user = await getUser(senderID)
-  if(!user || !user.animals[0]){
-    const ANSWER_QUEL_ANIMAL_AS_TU = '5a608de58e9bc239cc09bcb7'
-    const answer = await Answers.findOne({_id:ANSWER_QUEL_ANIMAL_AS_TU})
-    sendAnswer(answer, senderID)
-    return;
+async function getUserInfos(senderID){
+  let user = await Users.getUser(senderID)
+  if(!user){
+    user = await FacebookApiWrapper.getUserInfo(senderID)
+    user.senderID = senderID
+    user = await Users.create(user)
   }
-
-  const species = user.animals[0].species
-  const msgData = await Message.analyseMessage(message, species)
-  let answer = {}
-
-  if (msgData.payload) {
-    const payload = JSON.parse(msgData.payload)
-    if (payload.siblings) {
-      answer = await Answers.findOneRandomByIntent('sibling')
-      answer.children = payload.siblings
-    } else {
-      answer = await Message.getAnswerById(payload.id)
-    }
-  } else {
-    const intent = msgData.intent()
-    const entities = Message.getEntities(msgData)
-    const entitiesValues = await Message.getEntitiesValues(msgData, species)
-    const entitiesAndValues = entities.concat(entitiesValues)
-    const answers = await Message.findAnswer(species, intent, [entitiesAndValues])
-
-    if(answers.length && answers.length > 1)
-      answer = await buildAnswerWithQuickReplies(answers)
-    else
-      answer = answers
-  }
-
-  incrementAnswerDisplayCount(answer._id)
-  sendAnswer(answer, senderID)
-  return
-}
-
-function sendAnswer(answer, senderID){
-  const fbMsg = new FacebookMessageText(answer, senderID)
-  FacebookApiWrapper.postTofacebook(fbMsg.getMessage())
-  if (answer.gifId) {
-    const fbMsgGif = new FacebookMessageGif(answer, senderID)
-    FacebookApiWrapper.postTofacebook(fbMsgGif.getMessage())
-  }
-}
-
-
-/**
-TODO a del ??????
- * buildAnswerWithQuickReplies - build a multiplematch answer with quick replies
- *
- * @param  {} answers a list of answers
- * @return {}         an answer with quickreplies
- */
-async function buildAnswerWithQuickReplies(answers) {
-  console.log("buildAnswerWithQuickReplies")
-  const qrAnswer = await Answers.findOneRandomByIntent('multipleMatch')
-  const answerWithQR = {
-    text: qrAnswer.text,
-    children: [],
-  }
-  answers.forEach((answer) => {
-    answerWithQR.children.push({
-      label: answer.quickReplyLabel ? answer.quickReplyLabel : answer.name,
-      _id: answer._id,
-    })
-  })
-  return answerWithQR
-}
-
-/**
- * incrementAnswerDisplayCount
- *
- * @param  {String} answerId answer to increment
- */
-function incrementAnswerDisplayCount(answerId){
-  Answers.update({_id: answerId}, { $inc: { displayCount: 1} } )
-  .then(
-    (result) => {
-      // ok
-    },
-    (error) => {
-      logger.error(error)
-    },
-  )
-}
-
-async function updateUserAnimal(message, senderID){
-  const ID_ANSWER_LAPIN = '5a608d838e9bc239cc09bcb5'
-  const ID_ANSWER_CHIEN = '5a86d1d08588b2002c5cb70b'
-
-  if(message.quick_reply){
-    const payload = JSON.parse(message.quick_reply.payload)
-    if(payload.id === ID_ANSWER_LAPIN){
-      await Users.create({senderID : senderID, 'animals.0.species' : "lapin"}) // await pas nécessaire
-    }
-    if(payload.id === ID_ANSWER_CHIEN){
-      await Users.create({senderID : senderID, 'animals.0.species' : "chien"}) // await pas nécessaire
-    }
-  }
-}
-
-async function getUser(senderID){
-  const user = await Users.findOne({senderID : senderID})
   return user
 }
