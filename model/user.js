@@ -12,11 +12,14 @@ const AnimalSchema = new mongoose.Schema({
   weight: {
     type: Number,
   },
+  target_weight: {
+    type: Number,
+  },
   owner_plus_animal_weight: {
     type: Number,
   },
-  age_greater_12: {
-    type: Boolean
+  profil_morpho: {
+    type: Number
   },
   age: {
     type: Number,
@@ -56,7 +59,6 @@ const UserSchema = new mongoose.Schema({
   last_answer: { // id last answer returned to the user
     type: Answer.schema,
   },
-
 })
 
 

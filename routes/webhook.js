@@ -68,11 +68,13 @@ export default(server) => {
 
             if(user.last_answer.expectedBehaviour){
 
-
               await Behaviour.runBehaviour(user.last_answer.expectedBehaviour, user, event.message.text)
               // refresh user for new informtions
               user = await getUserInfos(senderID)
-              answer = await Answers.findOne({_id: user.last_answer.nextAnswer})
+              if(user.last_answer.nextAnswer)
+                answer = await Answers.findOne({_id: user.last_answer.nextAnswer})
+              else
+                answer = await MessageHandler.getAndBuildAnswer(event.message, user)
               MessageHandler.sendAnswer(answer, user)
 
             } else{
