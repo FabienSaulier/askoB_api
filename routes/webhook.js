@@ -31,7 +31,7 @@ export default(server) => {
   * */
   server.post('/webhook', (req, res) => {
     const data = req.body
-    console.log(data)
+    //console.log(data)
     // Make sure this is a page subscription
     if (data.object === 'page') {
       // Iterate over each entry - there may be multiple if batched
@@ -66,7 +66,7 @@ export default(server) => {
             logger.info(user)
             await FacebookApiWrapper.sendTypingOn(senderID)
 
-            if(user.last_answer.expectedBehaviour){
+            if(user.last_answer && user.last_answer.expectedBehaviour){
 
               await Behaviour.runBehaviour(user.last_answer.expectedBehaviour, user, event.message.text)
               // refresh user for new informtions
