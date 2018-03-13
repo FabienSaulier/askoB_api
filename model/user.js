@@ -15,6 +15,9 @@ const AnimalSchema = new mongoose.Schema({
   target_weight: {
     type: Number,
   },
+  init_needed_loss: {
+    type: Number,
+  },
   owner_plus_animal_weight: {
     type: Number,
   },
