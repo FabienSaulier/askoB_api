@@ -48,16 +48,16 @@ export default(server) => {
           let user = await getUserInfos(senderID)
 
           let answer = undefined
-          // handle postback
+          // handle postback  Q chien / Q lapin / Assistance p2p
           if(event.postback){
+            Users.setLastAnswer(user, {})
             logger.info(user)
             await FacebookApiWrapper.sendTypingOn(senderID)
+            MessageHandler.handleMenuActions(event, user)
+            // refresh user for new informtions
+            user = await getUserInfos(senderID)
             answer = await Answers.findOne({_id:event.postback.payload})
-
-            MessageHandler.handleSpecificUserActions(event, user)
             MessageHandler.sendAnswer(answer, user)
-
-            Users.setLastAnswer(user, answer)
             FacebookApiWrapper.sendTypingOff(senderID)
             return
           }

@@ -42,6 +42,7 @@ export default(server) => {
     if (inputAnswer && inputAnswer._id) {
       Answers.update({ _id: inputAnswer._id }, inputAnswer, { runValidators: true }, (err) => {
         if (err) {
+          logger.error(err)
           res.send(buildErrorMsg(err))
           return next()
         }
@@ -51,6 +52,7 @@ export default(server) => {
     } else {
       Answers.create(inputAnswer, (err) => {
         if (err) {
+          logger.error(err)
           res.send(buildErrorMsg(err))
           return next()
         }
@@ -59,7 +61,6 @@ export default(server) => {
       })
     }
   })
-
 
   /**
    * get the general answers corresponding to the intent and

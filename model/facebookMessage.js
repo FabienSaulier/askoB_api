@@ -20,7 +20,7 @@ export default class FacebookMessage {
       this.incrementVetButtonAnswerDisplayCount()
     }
 
-    this.populateQRWithHomeButton()
+    this.populateQRWithHomeButton(user.question_species)
 
   }
 
@@ -72,13 +72,24 @@ export default class FacebookMessage {
     }
   }
 
-  populateQRWithHomeButton(){
-    const HOME_MENU_LAPIN_ID = '5a4f45d5ae8a73002c23e682'
-    this.message.quick_replies.push({
-      content_type: 'text',
-      title: '🏠',
-      payload: JSON.stringify({ id: HOME_MENU_LAPIN_ID }),
-    })
+  populateQRWithHomeButton(species){
+    console.log(species)
+    const HOME_MENU_THEMES_LAPIN_ID = '5a4f45d5ae8a73002c23e682'
+    const HOME_MENU_THEMES_CHIEN_ID = '5a86d1d08588b2002c5cb70b'
+
+    if(species === 'lapin'){
+      this.message.quick_replies.push({
+        content_type: 'text',
+        title: '🏠',
+        payload: JSON.stringify({ id: HOME_MENU_THEMES_LAPIN_ID }),
+      })
+    } else if (species === 'chien'){
+      this.message.quick_replies.push({
+        content_type: 'text',
+        title: '🏠',
+        payload: JSON.stringify({ id: HOME_MENU_THEMES_CHIEN_ID }),
+      })
+    }
   }
 
   hasVetButton(answer) {
