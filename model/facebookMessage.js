@@ -35,7 +35,7 @@ export default class FacebookMessage {
       const payload = { id: last_answer._id }
       this.message.quick_replies.push({
         content_type: 'text',
-        title: '◀️',
+        title: '⬆️',
         payload: JSON.stringify(payload),
       })
     }
