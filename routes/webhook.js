@@ -31,7 +31,7 @@ export default(server) => {
   * */
   server.post('/webhook', (req, res) => {
     const data = req.body
-    console.log(data)
+    //console.log(data)
     // Make sure this is a page subscription
     if (data.object === 'page') {
       // Iterate over each entry - there may be multiple if batched

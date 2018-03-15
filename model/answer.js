@@ -92,6 +92,11 @@ AnswerSchema.statics.findOneRandomByIntent = async function findOneRandomByInten
   return result[randomIndex]
 }
 
+AnswerSchema.statics.dontUseNLP = {
+  text :  "Oups, utilise les boutons s'il te plaît.\n"+
+          "Si tu veux poser une question concernant ton animal, utilise le menu :)"
+}
+
 AnswerSchema.plugin(timestamps)
 AnswerSchema.plugin(mongooseStringQuery)
 AnswerSchema.plugin(uniqueValidator) // for name but buggy when update

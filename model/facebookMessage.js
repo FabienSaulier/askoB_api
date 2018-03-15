@@ -7,10 +7,12 @@ export default class FacebookMessage {
   constructor(answer, user) {
 
     // these are attributes name awaited by facebook
-    this.quick_replies = []
     this.recipientId = user.senderID
     this.message = {}
+    this.message.quick_replies = []
 
+    // order of populate is the order displayed
+    this.populateQRWithBackButton(answer, user.last_answer)
     this.populateQRWithChildren(answer)
     this.populateQRWithSiblings(answer)
     if(this.hasVetButton(answer)){
@@ -20,7 +22,6 @@ export default class FacebookMessage {
 
     this.populateQRWithHomeButton()
 
-    this.addQuickReplies()
   }
 
   getMessage() {
@@ -28,11 +29,23 @@ export default class FacebookMessage {
     return this.messageData
   }
 
+
+  populateQRWithBackButton(answer, last_answer){
+    if(last_answer && last_answer.children.length > 0){
+      const payload = { id: last_answer._id }
+      this.message.quick_replies.push({
+        content_type: 'text',
+        title: '🔙',
+        payload: JSON.stringify(payload),
+      })
+    }
+  }
+
   populateQRWithChildren(answer){
     if (answer.children) {
       answer.children.forEach((child) => {
         const payload = { id: child._id }
-        this.quick_replies.push({
+        this.message.quick_replies.push({
           content_type: 'text',
           title: child.label,
           payload: JSON.stringify(payload),
@@ -51,7 +64,7 @@ export default class FacebookMessage {
       answer.siblings.forEach((sibling) => {
         payload.siblings.push({ label: sibling.label, _id: sibling._id })
       })
-      this.quick_replies.push({
+      this.message.quick_replies.push({
         content_type: 'text',
         title: '➕',
         payload: JSON.stringify(payload),
@@ -61,7 +74,7 @@ export default class FacebookMessage {
 
   populateQRWithHomeButton(){
     const HOME_MENU_LAPIN_ID = '5a4f45d5ae8a73002c23e682'
-    this.quick_replies.push({
+    this.message.quick_replies.push({
       content_type: 'text',
       title: '🏠',
       payload: JSON.stringify({ id: HOME_MENU_LAPIN_ID }),
@@ -73,7 +86,7 @@ export default class FacebookMessage {
   }
 
   populateQRWithVetButton(){
-    this.quick_replies.push({
+    this.message.quick_replies.push({
       content_type: 'text',
       title: 'Contacter véto 👩‍⚕️',
       payload: JSON.stringify({ id: HOME_MENU_PARLER_VETO_ID }),
@@ -91,10 +104,5 @@ export default class FacebookMessage {
       },
     )
   }
-
-  addQuickReplies(){
-    this.message.quick_replies = this.quick_replies
-  }
-
 
 }
