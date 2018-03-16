@@ -64,12 +64,7 @@ const UserSchema = new mongoose.Schema({
   },
 })
 
-
 UserSchema.statics.getUser = async function(senderID) {
-  return await this.findOne({senderID: senderID})
-}
-
-UserSchema.statics.createUser = async function(senderID) {
   return await this.findOne({senderID: senderID})
 }
 
@@ -83,7 +78,6 @@ UserSchema.statics.setLastAnswer = async function(user, answer) {
 
 UserSchema.plugin(timestamps)
 UserSchema.plugin(mongooseStringQuery)
-UserSchema.plugin(uniqueValidator) // for name but buggy when update
 
 const Users = mongoose.models.users || mongoose.model('users', UserSchema)
 module.exports = Users

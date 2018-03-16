@@ -73,7 +73,6 @@ export default(server) => {
     }
 
     const url = `https://api.recast.ai/v2/users/${config.RECAST_USER_SLUG}/bots/${botSlug}/entities`
-    console.log(url)
     const options = { headers: { Authorization: `Token ${recastAccess}` } }
     return axios.get(url, options)
   }

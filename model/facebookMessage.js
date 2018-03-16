@@ -73,7 +73,6 @@ export default class FacebookMessage {
   }
 
   populateQRWithHomeButton(species){
-    console.log(species)
     const HOME_MENU_THEMES_LAPIN_ID = '5a4f45d5ae8a73002c23e682'
     const HOME_MENU_THEMES_CHIEN_ID = '5a86d1d08588b2002c5cb70b'
 

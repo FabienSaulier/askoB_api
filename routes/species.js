@@ -20,6 +20,22 @@ export default(server) => {
   })
 
   /**
+  * Send all answers
+  * */
+  server.get('/species', (req, res) => {
+    Answers.find({}).sort({ name: 1 })
+      .then(
+        (result) => {
+          res.send(200, result)
+        },
+        (error) => {
+          logger.fatal(error)
+        },
+      )
+  })
+
+  /**
+   * TODO a del ?
   * Send all answers of a species corresponding to the intent.
   * */
   server.get('/species/:species/intent/:intent', (req, res) => {
