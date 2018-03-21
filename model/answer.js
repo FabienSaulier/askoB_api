@@ -92,6 +92,10 @@ AnswerSchema.statics.findOneRandomByIntent = async function findOneRandomByInten
   return result[randomIndex]
 }
 
+AnswerSchema.statics.getChooseSpeciesAnswer = async function getStartedAnswer() {
+  return await this.findOne({_id: '5aaad250af36f96fe0f3ae72'})
+}
+
 AnswerSchema.statics.dontUseNLP = {
   text :  "Oups, utilise les boutons s'il te plaît.\n"+
           "Si tu veux poser une question concernant ton animal, utilise le menu :)"
