@@ -36,15 +36,15 @@ export default(server) => {
     if (data.object === 'page') {
       // Iterate over each entry - there may be multiple if batched
       data.entry.forEach((entry) => {
-        // condition pour prévenir un crash server. what's the point of theses messages?
-        if (!entry.messaging) {
-          return
-        }
+
+        if (!entry.messaging) { return }
 
         // Iterate over each messaging event
         entry.messaging.forEach( async (event) => {
 
           const senderID = event.sender.id
+          await FacebookApiWrapper.sendMarkSeen(senderID)
+          await FacebookApiWrapper.sendTypingOn(senderID)
           let user = await getUserInfos(senderID)
 
           let answer = undefined
@@ -53,20 +53,20 @@ export default(server) => {
             logger.info('postback ',event)
             Users.setLastAnswer(user, {})
             logger.info(user)
-            await FacebookApiWrapper.sendTypingOn(senderID)
             MessageHandler.handleMenuActions(event, user)
             // refresh user for new informtions
             user = await getUserInfos(senderID)
             answer = await Answers.findOne({_id:event.postback.payload})
             MessageHandler.sendAnswer(answer, user)
             Users.setLastAnswer(user, answer)
-            FacebookApiWrapper.sendTypingOff(senderID)
-            return
           }
 
           else if (event.message && event.message.text) { // check if it is an Actual message
             logger.info(user)
-            await FacebookApiWrapper.sendTypingOn(senderID)
+            if(event.message.text == '⬆️' || event.message.text == '🏠'){
+              await Users.setLastAnswer(user, {})
+              user = await getUserInfos(senderID)
+            }
 
             if(user.last_answer && user.last_answer.expectedBehaviour){
 
@@ -84,17 +84,13 @@ export default(server) => {
               MessageHandler.sendAnswer(answer, user)
             }
             Users.setLastAnswer(user, answer)
-            FacebookApiWrapper.sendTypingOff(senderID)
-          }
-
-          else if (event.delivery) {
-              // do nothing
           }
 
           else {
             logger.warn("message unknown: ",event);
           }
 
+          FacebookApiWrapper.sendTypingOff(senderID)
         })
 
         // Assume all went well. Send 200, otherwise, the request will time out and will be resent
