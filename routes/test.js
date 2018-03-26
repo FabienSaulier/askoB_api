@@ -30,7 +30,7 @@ export default(server) => {
     const { species } = req.params
     const result = await Message.analyseMessage({text:userInput}, species)
     const entitiesAndValues = await extractTags(result, species)
-    Message.findAnswer(species, result.intent(), [entitiesAndValues])
+    Message.findAnswer(species, [entitiesAndValues])
     .then(
       (answer) => {
         res.send(200, answer)
