@@ -30,6 +30,9 @@ const AnimalSchema = new mongoose.Schema({
   species: {
     type: String,
   },
+  id_weigh_loss_answer_step: { // dernière question où l'utilisateur s'est arrêté
+    type: mongoose.Schema.Types.ObjectId,
+  },
 })
 
 //WARNING  HACK il faudrait vérifier que le sender est correctement auth par facebook.
@@ -74,6 +77,10 @@ UserSchema.statics.updateQuestionSpecies = async function(user, species) {
 
 UserSchema.statics.setLastAnswer = async function(user, answer) {
   await Users.update({_id: user._id}, {$set: {'last_answer' : answer}})
+}
+
+UserSchema.statics.setIdWeighLossAnswerStep = async function(user, id_weigh_loss_answer_step) {
+  await Users.update({_id: user._id}, {$set: {'animals.0.id_weigh_loss_answer_step' : id_weigh_loss_answer_step}})
 }
 
 UserSchema.plugin(timestamps)

@@ -53,12 +53,19 @@ export default(server) => {
             logger.info('postback ',event)
             Users.setLastAnswer(user, {})
             logger.info(user)
-            MessageHandler.handleMenuActions(event, user)
+
+            MessageHandler.setUserQuestionSpecies(event, user)
             // refresh user for new informtions
             user = await getUserInfos(senderID)
-            answer = await Answers.findOne({_id:event.postback.payload})
+
+            // cas reprise de weight_loss
+            if(user.animals[0] && user.animals[0].id_weigh_loss_answer_step){
+              answer = await Answers.findOne({_id:user.animals[0].id_weigh_loss_answer_step})
+            } else{
+              answer = await Answers.findOne({_id:event.postback.payload})
+            }
+
             MessageHandler.sendAnswer(answer, user)
-            Users.setLastAnswer(user, answer)
           }
 
           else if (event.message && event.message.text) { // check if it is an Actual message
@@ -68,6 +75,7 @@ export default(server) => {
               user = await getUserInfos(senderID)
             }
 
+            // if Behaviour: run it then send the followup answer
             if(user.last_answer && user.last_answer.expectedBehaviour){
 
               await Behaviour.runBehaviour(user.last_answer.expectedBehaviour, user, event.message.text)
@@ -82,6 +90,10 @@ export default(server) => {
             } else{
               answer = await MessageHandler.getAndBuildAnswer(event.message, user)
               MessageHandler.sendAnswer(answer, user)
+            }
+
+            if(user.question_species === 'autres'){
+              Users.setIdWeighLossAnswerStep(user, answer._id)
             }
             Users.setLastAnswer(user, answer)
           }
