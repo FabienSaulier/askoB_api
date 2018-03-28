@@ -51,20 +51,17 @@ export default(server) => {
           // handle postback  Q chien / Q lapin / Assistance p2p
           if(event.postback){
             logger.info('postback ',event)
-            Users.setLastAnswer(user, {})
-            logger.info(user)
-
-            MessageHandler.setUserQuestionSpecies(event, user)
+            await MessageHandler.setUserQuestionSpecies(event, user)
             // refresh user for new informtions
             user = await getUserInfos(senderID)
+            logger.info(user)
 
             // cas reprise de weight_loss
-            if(user.animals[0] && user.animals[0].id_weigh_loss_answer_step){
+            if(user.question_species === 'autres' && user.animals[0] && user.animals[0].id_weigh_loss_answer_step){
               answer = await Answers.findOne({_id:user.animals[0].id_weigh_loss_answer_step})
             } else{
               answer = await Answers.findOne({_id:event.postback.payload})
             }
-
             MessageHandler.sendAnswer(answer, user)
           }
 
@@ -91,16 +88,14 @@ export default(server) => {
               answer = await MessageHandler.getAndBuildAnswer(event.message, user)
               MessageHandler.sendAnswer(answer, user)
             }
-
-            if(user.question_species === 'autres'){
-              Users.setIdWeighLossAnswerStep(user, answer._id)
-            }
-            Users.setLastAnswer(user, answer)
-          }
-
-          else {
+          } else {
             logger.warn("message unknown: ",event);
           }
+
+          if(user.question_species === 'autres'){
+            Users.setIdWeighLossAnswerStep(user, answer._id)
+          }
+          Users.setLastAnswer(user, answer)
 
           FacebookApiWrapper.sendTypingOff(senderID)
         })

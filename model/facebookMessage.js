@@ -1,4 +1,5 @@
 import Answers from './answer'
+import _ from 'lodash'
 
 const HOME_MENU_PARLER_VETO_ID = '5a68b6777fb4053ae8ee546a'
 
@@ -19,16 +20,16 @@ export default class FacebookMessage {
       this.populateQRWithVetButton()
       this.incrementVetButtonAnswerDisplayCount()
     }
-
     this.populateQRWithHomeButton(user.question_species)
-
+    if(_.isEmpty(this.message.quick_replies)){ // facebook doesn't accept empty quick_replies
+      delete this.message.quick_replies
+    }
   }
 
   getMessage() {
     this.messageData =  { recipient: { id: this.recipientId }, message: this.message }
     return this.messageData
   }
-
 
   populateQRWithBackButton(answer, last_answer){
     if(last_answer && last_answer.children.length > 0){
