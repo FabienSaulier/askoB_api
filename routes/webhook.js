@@ -31,7 +31,7 @@ export default(server) => {
   * */
   server.post('/webhook', (req, res) => {
     const data = req.body
-    //console.log(data)
+
     // Make sure this is a page subscription
     if (data.object === 'page') {
       // Iterate over each entry - there may be multiple if batched
@@ -50,7 +50,12 @@ export default(server) => {
           let answer = undefined
           // handle postback  Q chien / Q lapin / Assistance p2p
           if(event.postback){
-            logger.info('postback ',event)
+
+            if(event.postback.payload === 'RESET_P2P'){
+              await Users.resetP2P(user)
+              event.postback.payload = "5aa0394eba59e85b24e839d0" // intro p2p
+            }
+
             await MessageHandler.setUserQuestionSpecies(event, user)
             // refresh user for new informtions
             user = await getUserInfos(senderID)
@@ -67,6 +72,7 @@ export default(server) => {
 
           else if (event.message && event.message.text) { // check if it is an Actual message
             logger.info(user)
+            logger.info(event.message)
             if(event.message.text == '⬆️' || event.message.text == '🏠'){
               await Users.setLastAnswer(user, {})
               user = await getUserInfos(senderID)
@@ -75,7 +81,7 @@ export default(server) => {
             // if Behaviour: run it then send the followup answer
             if(user.last_answer && user.last_answer.expectedBehaviour){
 
-              await Behaviour.runBehaviour(user.last_answer.expectedBehaviour, user, event.message.text)
+              await Behaviour.runBehaviour(user.last_answer.expectedBehaviour, user, event.message)
               // refresh user for new informtions
               user = await getUserInfos(senderID)
               if(user.last_answer.nextAnswer)

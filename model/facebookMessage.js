@@ -45,7 +45,10 @@ export default class FacebookMessage {
   populateQRWithChildren(answer){
     if (answer.children) {
       answer.children.forEach((child) => {
-        const payload = { id: child._id }
+        let payload = { id: child._id}
+        if(child.payload_data){
+          _.set(payload, child.payload_data.key, child.payload_data.value)
+        }
         this.message.quick_replies.push({
           content_type: 'text',
           title: child.label,

@@ -33,6 +33,30 @@ const AnimalSchema = new mongoose.Schema({
   id_weigh_loss_answer_step: { // dernière question où l'utilisateur s'est arrêté
     type: mongoose.Schema.Types.ObjectId,
   },
+  habit_frequency_food_outside_meal: {
+    type: String,
+    enum: ['NEVER', 'SOMETIMES', 'OFTEN', 'EVERYTIME'],
+  },
+  habit_frequency_treats: {
+    type: String,
+    enum: ['NEVER', 'SOMETIMES', 'OFTEN', 'EVERYTIME'],
+  },
+  habit_duration_walk: {
+    type: String,
+    enum: ['SHORT', 'MEDIUM', 'LONG'],
+  },
+  habit_quantity_food_respected: {
+    type: Boolean,
+  },
+  alert_time_food: {
+    type: Number, // heure.  00 means for midday AND supper
+  },
+  alert_time_treats: {
+    type: Number, // heure.  00 means for midday AND supper
+  },
+  alert_time_walk: {
+    type: Number, // heure
+  }
 })
 
 //WARNING  HACK il faudrait vérifier que le sender est correctement auth par facebook.
@@ -81,6 +105,10 @@ UserSchema.statics.setLastAnswer = async function(user, answer) {
 
 UserSchema.statics.setIdWeighLossAnswerStep = async function(user, id_weigh_loss_answer_step) {
   await Users.update({_id: user._id}, {$set: {'animals.0.id_weigh_loss_answer_step' : id_weigh_loss_answer_step}})
+}
+
+UserSchema.statics.resetP2P = async function(user) {
+  await Users.update({_id: user._id}, {$unset: {'animals.0.id_weigh_loss_answer_step' : '' }})
 }
 
 UserSchema.plugin(timestamps)

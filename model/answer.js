@@ -4,6 +4,7 @@ import timestamps from 'mongoose-timestamp'
 import uniqueValidator from 'mongoose-unique-validator'
 import _ from 'lodash'
 
+
 const SubAnswerSchema = new mongoose.Schema({
   _id: {
     type: String,
@@ -17,6 +18,16 @@ const SubAnswerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  payload_data: { // extra data add to payload for Quick Replies
+    key: {
+      type: String,
+      required: true,
+    },
+    value: {
+      type: mongoose.Schema.Types.Mixed,
+      default: undefined,
+    }
+  }
 })
 
 export const AnswerSchema = new mongoose.Schema({
