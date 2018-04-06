@@ -76,6 +76,19 @@ export const AnswerSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Le texte de la réponse ne doit pas être vide'],
   },
+  text_fr: {
+    type: String,
+    required: [true, 'Le texte de la réponse ne doit pas être vide'],
+  },
+  text_gb: {
+    type: String,
+  },
+  text_es: {
+    type: String,
+  },
+  text_nl: {
+    type: String,
+  },
   gifId: {
     type: String,
   },
