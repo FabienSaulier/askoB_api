@@ -5,7 +5,7 @@ export default class FacebookMessageText extends FacebookMessage {
 
   constructor(answer, user) {
     super(answer, user)
-    this.message.text = this.replaceToken(answer.text, user)
+    this.message.text = this.replaceToken(answer.text_fr, user)
   }
 
   replaceToken(text, user){
