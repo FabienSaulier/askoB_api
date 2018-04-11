@@ -45,15 +45,19 @@ export const AnswerSchema = new mongoose.Schema({
   quickReplyLabel_fr: {
     type: String,
     required: [true, 'Un quick reply label est nécessaire'],
+    maxlength: [20, 'quickReplyLabel_fr > à 20 caractères'],
   },
   quickReplyLabel_gb: {
     type: String,
+    maxlength: [20, 'quickReplyLabel_gb > à 20 caractères'],
   },
   quickReplyLabel_es: {
     type: String,
+    maxlength: [20, 'quickReplyLabel_es > à 20 caractères'],
   },
   quickReplyLabel_nl: {
     type: String,
+    maxlength: [20, 'quickReplyLabel_nl > à 20 caractères'],
   },
   precise: {
     type: Boolean,
