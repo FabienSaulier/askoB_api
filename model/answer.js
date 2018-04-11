@@ -38,7 +38,21 @@ export const AnswerSchema = new mongoose.Schema({
   description: { // description utilise en interne
     type: String,
   },
-  quickReplyLabel: {
+  quickReplyLabel: { // TODO a del a l'avenir
+    type: String,
+    required: [true, 'Un quick reply label est nécessaire'],
+  },
+  quickReplyLabel_fr: {
+    type: String,
+    required: [true, 'Un quick reply label est nécessaire'],
+  },
+  quickReplyLabel_gb: {
+    type: String,
+  },
+  quickReplyLabel_es: {
+    type: String,
+  },
+  quickReplyLabel_nl: {
     type: String,
   },
   precise: {
@@ -72,7 +86,7 @@ export const AnswerSchema = new mongoose.Schema({
   entValues: {
     type: [String],
   },
-  text: {
+  text: { // TODO a del a l'avenir
     type: String,
     required: [true, 'Le texte de la réponse ne doit pas être vide'],
   },
