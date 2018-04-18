@@ -79,6 +79,7 @@ export default class FacebookMessage {
   populateQRWithHomeButton(species){
     const HOME_MENU_THEMES_LAPIN_ID = '5a4f45d5ae8a73002c23e682'
     const HOME_MENU_THEMES_CHIEN_ID = '5a86d1d08588b2002c5cb70b'
+    const HOME_MENU_THEMES_CHAT_ID = '5ad79467aaee76002cc254ee'
 
     if(species === 'lapin'){
       this.message.quick_replies.push({
@@ -91,6 +92,12 @@ export default class FacebookMessage {
         content_type: 'text',
         title: '🏠',
         payload: JSON.stringify({ id: HOME_MENU_THEMES_CHIEN_ID }),
+      })
+    } else if (species === 'chat'){
+      this.message.quick_replies.push({
+        content_type: 'text',
+        title: '🏠',
+        payload: JSON.stringify({ id: HOME_MENU_THEMES_CHAT_ID }),
       })
     }
   }
