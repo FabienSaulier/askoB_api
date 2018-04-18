@@ -64,9 +64,12 @@ export default(server) => {
   function getRecastEntities(species) {
     let botSlug = ''
     let recastAccess = ''
-    if(species === 'chien'){
+    if (species === 'chien') {
       botSlug = config.RECAST_BOT_SLUG_CHIEN
       recastAccess = config.RECAST_DEV_ACCESS_TOKEN_CHIEN
+    } else if (species === 'chat') {
+      botSlug = config.RECAST_BOT_SLUG_CHAT
+      recastAccess = config.RECAST_DEV_ACCESS_TOKEN_CHAT
     }else{
       botSlug = config.RECAST_BOT_SLUG
       recastAccess = config.RECAST_DEV_ACCESS_TOKEN
