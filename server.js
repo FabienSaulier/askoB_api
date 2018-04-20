@@ -7,6 +7,7 @@ import db from './model/db'
 const server = restify.createServer()
 server.use(restify.plugins.bodyParser())
 server.use(restify.plugins.queryParser())
+//server.use(restify.plugins.serveStatic())
 server.pre(cors.preflight)
 server.use(cors.actual)
 
