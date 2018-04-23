@@ -7,6 +7,7 @@ import * as MessageHandler from '../lib/messageHandler'
 import Answers from '../model/answer'
 import Users from '../model/user'
 import * as Behaviour from '../lib/behaviour'
+import * as ANSWERS_ID from '../lib/answersID'
 
 /**
 * Facebook entries point
@@ -46,14 +47,14 @@ export default(server) => {
           await FacebookApiWrapper.sendMarkSeen(senderID)
           await FacebookApiWrapper.sendTypingOn(senderID)
           let user = await getUserInfos(senderID)
-
           let answer = undefined
+
           // handle postback  Q chien / Q lapin / Assistance p2p
           if(event.postback){
 
             if(event.postback.payload === 'RESET_P2P'){
               await Users.resetP2P(user)
-              event.postback.payload = "5aa0394eba59e85b24e839d0" // intro p2p
+              event.postback.payload = ANSWERS_ID.ANSWER_MENU_P2P_ID // intro p2p
             }
 
             await MessageHandler.setUserQuestionSpecies(event, user)
