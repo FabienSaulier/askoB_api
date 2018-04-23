@@ -3,6 +3,7 @@ import mongooseStringQuery from 'mongoose-string-query'
 import timestamps from 'mongoose-timestamp'
 import uniqueValidator from 'mongoose-unique-validator'
 import _ from 'lodash'
+import * as ANSWERS_ID from '../lib/answersID'
 
 
 const SubAnswerSchema = new mongoose.Schema({
@@ -134,8 +135,17 @@ AnswerSchema.statics.findOneRandomByIntent = async function findOneRandomByInten
   return result[randomIndex]
 }
 
-AnswerSchema.statics.getChooseSpeciesAnswer = async function getStartedAnswer() {
-  return await this.findOne({_id: '5aaad250af36f96fe0f3ae72'})
+AnswerSchema.statics.findChooseSpeciesAnswer = async function getStartedAnswer() {
+  return await this.findOne({_id: ANSWERS_ID.ANSWER_GET_STARTED_ID})
+}
+
+AnswerSchema.statics.findMenuSpecies = async function getStartedAnswer(species) {
+  if(species === 'chien')
+    return this.findOne({_id: ANSWERS_ID.ANSWER_MENU_DOG_ID})
+  if(species === 'chat')
+    return this.findOne({_id: ANSWERS_ID.ANSWER_MENU_CAT_ID})
+  if(species === 'lapin')
+    return this.findOne({_id: ANSWERS_ID.ANSWER_MENU_RABBIT_ID})
 }
 
 AnswerSchema.statics.dontUseNLP = {

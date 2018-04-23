@@ -47,6 +47,8 @@ export default(server) => {
           await FacebookApiWrapper.sendMarkSeen(senderID)
           await FacebookApiWrapper.sendTypingOn(senderID)
           let user = await getUserInfos(senderID)
+          await MessageHandler.updateUserQuestionSpecies(event, user)
+
           let answer = undefined
 
           // handle postback  Q chien / Q lapin / Assistance p2p
@@ -57,7 +59,6 @@ export default(server) => {
               event.postback.payload = ANSWERS_ID.ANSWER_MENU_P2P_ID // intro p2p
             }
 
-            await MessageHandler.setUserQuestionSpecies(event, user)
             // refresh user for new informtions
             user = await getUserInfos(senderID)
             logger.info(user)

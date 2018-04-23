@@ -1,5 +1,6 @@
 import Answers from './answer'
 import _ from 'lodash'
+import * as ANSWERS_ID from '../lib/answersID'
 
 const HOME_MENU_PARLER_VETO_ID = '5a68b6777fb4053ae8ee546a'
 
@@ -77,27 +78,23 @@ export default class FacebookMessage {
   }
 
   populateQRWithHomeButton(species){
-    const HOME_MENU_THEMES_LAPIN_ID = '5a4f45d5ae8a73002c23e682'
-    const HOME_MENU_THEMES_CHIEN_ID = '5a86d1d08588b2002c5cb70b'
-    const HOME_MENU_THEMES_CHAT_ID = '5ad79467aaee76002cc254ee'
-
     if(species === 'lapin'){
       this.message.quick_replies.push({
         content_type: 'text',
         title: '🏠',
-        payload: JSON.stringify({ id: HOME_MENU_THEMES_LAPIN_ID }),
+        payload: JSON.stringify({ id: ANSWERS_ID.ANSWER_MENU_RABBIT_ID }),
       })
     } else if (species === 'chien'){
       this.message.quick_replies.push({
         content_type: 'text',
         title: '🏠',
-        payload: JSON.stringify({ id: HOME_MENU_THEMES_CHIEN_ID }),
+        payload: JSON.stringify({ id: ANSWERS_ID.ANSWER_MENU_DOG_ID }),
       })
     } else if (species === 'chat'){
       this.message.quick_replies.push({
         content_type: 'text',
         title: '🏠',
-        payload: JSON.stringify({ id: HOME_MENU_THEMES_CHAT_ID }),
+        payload: JSON.stringify({ id: ANSWERS_ID.ANSWER_MENU_CAT_ID }),
       })
     }
   }
