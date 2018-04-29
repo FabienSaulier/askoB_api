@@ -6,6 +6,7 @@ import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 import * as MessageHandler from '../lib/messageHandler'
 import Answers from '../model/answer'
 import Users from '../model/user'
+import MessageLog from '../model/messageLog'
 import * as Behaviour from '../lib/behaviour'
 import * as ANSWERS_ID from '../lib/answersID'
 
@@ -50,9 +51,11 @@ export default(server) => {
           await MessageHandler.updateUserQuestionSpecies(event, user)
 
           let answer = undefined
+          let userInput = undefined
 
           // handle postback  Q chien / Q lapin / Assistance p2p
           if(event.postback){
+            userInput = event.postback.payload
 
             if(event.postback.payload === 'RESET_P2P'){
               await Users.resetP2P(user)
@@ -73,6 +76,7 @@ export default(server) => {
           }
 
           else if (event.message && event.message.text) { // check if it is an Actual message
+            userInput = JSON.stringify(event.message)
             logger.info(user)
             logger.info(event.message)
             if(event.message.text == '⬆️' || event.message.text == '🏠'){
@@ -103,7 +107,9 @@ export default(server) => {
           if(user.question_species === 'autres'){
             Users.setIdWeighLossAnswerStep(user, answer._id)
           }
+
           Users.setLastAnswer(user, answer)
+          MessageLog.createAndSave(user, userInput, answer)
 
           FacebookApiWrapper.sendTypingOff(senderID)
         })
