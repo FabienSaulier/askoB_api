@@ -28,100 +28,108 @@ export default(server) => {
     }
   })
 
+
+  // check if this is a page subscription
+  function isPageSubscription(data){
+    if (data.object != 'page') {
+      logger.warn('received a non page data: ', data.object)
+      logger.warn('data: ', data)
+      return false
+    }
+    return true
+  }
+
   /**
   * Entry point of users messages
   * */
   server.post('/webhook', (req, res) => {
     const data = req.body
 
-    // Make sure this is a page subscription
-    if (data.object === 'page') {
-      // Iterate over each entry - there may be multiple if batched
-      data.entry.forEach((entry) => {
+    if(!isPageSubscription(data)) { return }
 
-        if (!entry.messaging) { return }
+    // Iterate over each entry - there may be multiple if batched
+    // https://developers.facebook.com/docs/messenger-platform/reference/webhook-events/
+    data.entry.forEach((entry) => {
 
-        // Iterate over each messaging event
-        entry.messaging.forEach( async (event) => {
+      if (!entry.messaging) { return }
 
-          const senderID = event.sender.id
-          await FacebookApiWrapper.sendMarkSeen(senderID)
-          await FacebookApiWrapper.sendTypingOn(senderID)
-          let user = await getUserInfos(senderID)
-          await MessageHandler.updateUserQuestionSpecies(event, user)
+      // Iterate over each messaging event
+      entry.messaging.forEach( async (event) => {
 
-          let answer = undefined
-          let userInput = undefined
+        const senderID = event.sender.id
+        await FacebookApiWrapper.sendMarkSeen(senderID)
+        await FacebookApiWrapper.sendTypingOn(senderID)
+        let user = await getUserInfos(senderID)
+        await MessageHandler.updateUserQuestionSpecies(event, user)
 
-          // handle postback  Q chien / Q lapin / Assistance p2p
-          if(event.postback){
-            userInput = event.postback.payload
+        let answer = undefined
+        let userInput = undefined
 
-            if(event.postback.payload === 'RESET_P2P'){
-              await Users.resetP2P(user)
-              event.postback.payload = ANSWERS_ID.ANSWER_MENU_P2P_ID // intro p2p
-            }
+        // handle postback  Q chien / Q lapin / Assistance p2p
+        if(event.postback){
+          userInput = event.postback.payload
 
+          if(event.postback.payload === 'RESET_P2P'){
+            await Users.resetP2P(user)
+            event.postback.payload = ANSWERS_ID.ANSWER_MENU_P2P_ID // intro p2p
+          }
+
+          // refresh user for new informtions
+          user = await getUserInfos(senderID)
+          logger.info(user)
+
+          // cas reprise de weight_loss
+          if(user.question_species === 'autres' && user.animals[0] && user.animals[0].id_weigh_loss_answer_step){
+            answer = await Answers.findOne({_id:user.animals[0].id_weigh_loss_answer_step})
+          } else{
+            answer = await Answers.findOne({_id:event.postback.payload})
+          }
+          MessageHandler.sendAnswer(answer, user)
+        }
+
+        else if (event.message && event.message.text) { // check if it is an Actual message
+          userInput = JSON.stringify(event.message)
+          logger.info(user)
+          logger.info(event.message)
+          if(event.message.text == '⬆️' || event.message.text == '🏠'){
+            await Users.setLastAnswer(user, {})
+            user = await getUserInfos(senderID)
+          }
+
+          // if Behaviour: run it then send the followup answer
+          if(user.last_answer && user.last_answer.expectedBehaviour){
+
+            await Behaviour.runBehaviour(user.last_answer.expectedBehaviour, user, event.message)
             // refresh user for new informtions
             user = await getUserInfos(senderID)
-            logger.info(user)
+            if(user.last_answer.nextAnswer)
+              answer = await Answers.findOne({_id: user.last_answer.nextAnswer})
+            else
+              answer = await MessageHandler.getAndBuildAnswer(event.message, user)
+            MessageHandler.sendAnswer(answer, user)
 
-            // cas reprise de weight_loss
-            if(user.question_species === 'autres' && user.animals[0] && user.animals[0].id_weigh_loss_answer_step){
-              answer = await Answers.findOne({_id:user.animals[0].id_weigh_loss_answer_step})
-            } else{
-              answer = await Answers.findOne({_id:event.postback.payload})
-            }
+          } else{
+            answer = await MessageHandler.getAndBuildAnswer(event.message, user)
             MessageHandler.sendAnswer(answer, user)
           }
+        } else {
+          logger.warn("message unknown: ",event);
+        }
 
-          else if (event.message && event.message.text) { // check if it is an Actual message
-            userInput = JSON.stringify(event.message)
-            logger.info(user)
-            logger.info(event.message)
-            if(event.message.text == '⬆️' || event.message.text == '🏠'){
-              await Users.setLastAnswer(user, {})
-              user = await getUserInfos(senderID)
-            }
+        if(user.question_species === 'autres'){
+          Users.setIdWeighLossAnswerStep(user, answer._id)
+        }
 
-            // if Behaviour: run it then send the followup answer
-            if(user.last_answer && user.last_answer.expectedBehaviour){
+        Users.setLastAnswer(user, answer)
+        MessageLog.createAndSave(user, userInput, answer)
 
-              await Behaviour.runBehaviour(user.last_answer.expectedBehaviour, user, event.message)
-              // refresh user for new informtions
-              user = await getUserInfos(senderID)
-              if(user.last_answer.nextAnswer)
-                answer = await Answers.findOne({_id: user.last_answer.nextAnswer})
-              else
-                answer = await MessageHandler.getAndBuildAnswer(event.message, user)
-              MessageHandler.sendAnswer(answer, user)
-
-            } else{
-              answer = await MessageHandler.getAndBuildAnswer(event.message, user)
-              MessageHandler.sendAnswer(answer, user)
-            }
-          } else {
-            logger.warn("message unknown: ",event);
-          }
-
-          if(user.question_species === 'autres'){
-            Users.setIdWeighLossAnswerStep(user, answer._id)
-          }
-
-          Users.setLastAnswer(user, answer)
-          MessageLog.createAndSave(user, userInput, answer)
-
-          FacebookApiWrapper.sendTypingOff(senderID)
-        })
-
-        // Assume all went well. Send 200, otherwise, the request will time out and will be resent
-        res.send(200)
+        FacebookApiWrapper.sendTypingOff(senderID)
       })
 
-    } else {
-      logger.warn('received a non page data: ', data.object)
-      logger.warn('data: ', data)
-    }
+      // Assume all went well. Send 200, otherwise, the request will time out and will be resent
+      res.send(200)
+    })
+
   })
 }
 
