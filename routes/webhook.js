@@ -6,6 +6,7 @@ import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 import * as MessageHandler from '../lib/messageHandler'
 import * as ProcessPostbackInput from '../lib/processPostbackInput'
 import * as ProcessTextInput from '../lib/processTextInput'
+import * as ProcessQuickReplyInput from '../lib/processQuickReplyInput'
 import Answers from '../model/answer'
 import Users from '../model/user'
 import MessageLog from '../model/messageLog'
@@ -68,13 +69,21 @@ export default(server) => {
             console.log("call fb wrapper ",answer)
             MessageHandler.sendAnswer(answer, user)
             break
+
+          case "QUICK_REPLY":
+            answer = await ProcessQuickReplyInput.run(event, user)
+            console.log("call fb wrapper ",answer)
+            MessageHandler.sendAnswer(answer, user)
+            break
+
           case "TEXT":
             answer = await ProcessTextInput.run(event, user)
             console.log("call fb wrapper ",answer)
             MessageHandler.sendAnswer(answer, user)
             break
-          default:
 
+          default:
+            logger.warn("unknown input type for the event ",event)
         }
 
 
