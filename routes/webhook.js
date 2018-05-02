@@ -5,6 +5,7 @@ import * as Message from '../lib/message'
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 import * as MessageHandler from '../lib/messageHandler'
 import * as ProcessPostbackInput from '../lib/processPostbackInput'
+import * as ProcessTextInput from '../lib/processTextInput'
 import Answers from '../model/answer'
 import Users from '../model/user'
 import MessageLog from '../model/messageLog'
@@ -63,46 +64,18 @@ export default(server) => {
 
         switch (inputType) {
           case "POSTBACK":
-            const answer = await ProcessPostbackInput.run(event, user)
+            answer = await ProcessPostbackInput.run(event, user)
             console.log("call fb wrapper ",answer)
             MessageHandler.sendAnswer(answer, user)
             break
           case "TEXT":
-            //processTextInput
+            answer = await ProcessTextInput.run(event, user)
+            console.log("call fb wrapper ",answer)
+            MessageHandler.sendAnswer(answer, user)
             break
           default:
 
         }
-
-
-        if (event.message && event.message.text) { // check if it is an Actual message
-          userInput = JSON.stringify(event.message)
-          logger.info(user)
-          logger.info(event.message)
-          if(event.message.text == '⬆️' || event.message.text == '🏠'){
-            await Users.setLastAnswer(user, {})
-            user = await getUserInfos(senderID)
-          }
-
-          // if Behaviour: run it then send the followup answer
-          if(user.last_answer && user.last_answer.expectedBehaviour){
-
-            await Behaviour.runBehaviour(user.last_answer.expectedBehaviour, user, event.message)
-            // refresh user for new informtions
-            user = await getUserInfos(senderID)
-            if(user.last_answer.nextAnswer)
-              answer = await Answers.findOne({_id: user.last_answer.nextAnswer})
-            else
-              answer = await MessageHandler.getAndBuildAnswer(event.message, user)
-            MessageHandler.sendAnswer(answer, user)
-
-          } else{
-            answer = await MessageHandler.getAndBuildAnswer(event.message, user)
-            MessageHandler.sendAnswer(answer, user)
-          }
-        }
-
-
 
 
         if(user.question_species === 'autres'){
