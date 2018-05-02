@@ -4,6 +4,7 @@ import timestamps from 'mongoose-timestamp'
 import uniqueValidator from 'mongoose-unique-validator'
 import Answer from './answer'
 import _ from 'lodash'
+import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 
 const AnimalSchema = new mongoose.Schema({
   name: {
@@ -109,6 +110,16 @@ UserSchema.statics.setIdWeighLossAnswerStep = async function(user, id_weigh_loss
 
 UserSchema.statics.resetP2P = async function(user) {
   await Users.update({_id: user._id}, {$unset: {'animals.0.id_weigh_loss_answer_step' : '' }})
+}
+
+UserSchema.statics.getUserInfos = async function(senderID){
+  let user = await Users.getUser(senderID)
+  if(!user){
+    user = await FacebookApiWrapper.getUserInfo(senderID)
+    user.senderID = senderID
+    user = await Users.create(user)
+  }
+  return user
 }
 
 UserSchema.plugin(timestamps)

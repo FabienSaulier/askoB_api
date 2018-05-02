@@ -4,6 +4,7 @@ import * as Message from '../lib/message'
 
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
 import * as MessageHandler from '../lib/messageHandler'
+import * as ProcessPostbackInput from '../lib/processPostbackInput'
 import Answers from '../model/answer'
 import Users from '../model/user'
 import MessageLog from '../model/messageLog'
@@ -54,37 +55,27 @@ export default(server) => {
         logger.info("input: ",inputType)
 
 
-        let user = await getUserInfos(senderID)
+        let user = await Users.getUserInfos(senderID)
         await MessageHandler.updateUserQuestionSpecies(event, user)
-
         let answer = undefined
         let userInput = undefined
 
 
+        switch (inputType) {
+          case "POSTBACK":
+            const answer = await ProcessPostbackInput.run(event, user)
+            console.log("call fb wrapper ",answer)
+            MessageHandler.sendAnswer(answer, user)
+            break
+          case "TEXT":
+            //processTextInput
+            break
+          default:
 
-        // handle postback  Q chien / Q lapin / Assistance p2p
-        if(event.postback){
-          userInput = event.postback.payload
-          if(event.postback.payload === 'RESET_P2P'){
-            await Users.resetP2P(user)
-            event.postback.payload = ANSWERS_ID.ANSWER_MENU_P2P_ID // intro p2p
-          }
-          // refresh user for new informtions
-          user = await getUserInfos(senderID)
-          logger.info(user)
-          // cas reprise de weight_loss
-          if(user.question_species === 'autres' && user.animals[0] && user.animals[0].id_weigh_loss_answer_step){
-            answer = await Answers.findOne({_id:user.animals[0].id_weigh_loss_answer_step})
-          } else{
-            answer = await Answers.findOne({_id:event.postback.payload})
-          }
-          MessageHandler.sendAnswer(answer, user)
         }
 
 
-
-
-        else if (event.message && event.message.text) { // check if it is an Actual message
+        if (event.message && event.message.text) { // check if it is an Actual message
           userInput = JSON.stringify(event.message)
           logger.info(user)
           logger.info(event.message)
@@ -109,10 +100,7 @@ export default(server) => {
             answer = await MessageHandler.getAndBuildAnswer(event.message, user)
             MessageHandler.sendAnswer(answer, user)
           }
-        } else {
-          logger.warn("message unknown: ",event);
         }
-
 
 
 
@@ -158,14 +146,4 @@ function getInputType(event){
 
   logger.error("input type unknown ",event)
   return "UNKNOWN"
-}
-
-async function getUserInfos(senderID){
-  let user = await Users.getUser(senderID)
-  if(!user){
-    user = await FacebookApiWrapper.getUserInfo(senderID)
-    user.senderID = senderID
-    user = await Users.create(user)
-  }
-  return user
 }
