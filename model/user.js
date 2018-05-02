@@ -4,7 +4,9 @@ import timestamps from 'mongoose-timestamp'
 import uniqueValidator from 'mongoose-unique-validator'
 import Answer from './answer'
 import _ from 'lodash'
+import logger from '../lib/logger'
 import * as FacebookApiWrapper from '../lib/facebookApiWrapper'
+import * as ANSWERS_ID from '../lib/answersID'
 
 const AnimalSchema = new mongoose.Schema({
   name: {
@@ -96,12 +98,8 @@ UserSchema.statics.getUser = async function(senderID) {
   return await this.findOne({senderID: senderID})
 }
 
-UserSchema.statics.updateQuestionSpecies = async function(user, species) {
-  await Users.update({_id: user._id}, {$set: {'question_species' : species}})
-}
-
 UserSchema.statics.setLastAnswer = async function(user, answer) {
-  await Users.update({_id: user._id}, {$set: {'last_answer' : answer}})
+  return Users.findByIdAndUpdate({_id: user._id}, {$set: {'last_answer' : answer}}).exec()
 }
 
 UserSchema.statics.setIdWeighLossAnswerStep = async function(user, id_weigh_loss_answer_step) {
@@ -120,6 +118,37 @@ UserSchema.statics.getUserInfos = async function(senderID){
     user = await Users.create(user)
   }
   return user
+}
+
+/**
+ * updateUserQuestionSpecies - description
+ * @param  {answerID} answerID
+ * @param  {type} user
+ */
+UserSchema.statics.updateUserQuestionSpecies  = async function(answerID, user){
+  switch (answerID) {
+    case ANSWERS_ID.ANSWER_MENU_RABBIT_ID:
+      return Users.updateQuestionSpecies(user, 'lapin')
+      break
+    case ANSWERS_ID.ANSWER_MENU_DOG_ID:
+      return Users.updateQuestionSpecies(user, 'chien')
+      break
+    case ANSWERS_ID.ANSWER_MENU_CAT_ID:
+      return Users.updateQuestionSpecies(user, 'chat')
+      break
+      case ANSWERS_ID.ANSWER_MENU_P2P_ID:
+      return Users.updateQuestionSpecies(user, 'autres')
+      break
+    default:
+  }
+}
+
+/**
+ * UserSchema - description
+ * update and return user
+ */
+UserSchema.statics.updateQuestionSpecies = async function(user, species) {
+  return Users.findByIdAndUpdate({_id: user._id}, {$set: {'question_species' : species}}).exec()
 }
 
 UserSchema.plugin(timestamps)

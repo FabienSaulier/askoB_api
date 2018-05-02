@@ -10,8 +10,6 @@ import * as ProcessQuickReplyInput from '../lib/processQuickReplyInput'
 import Answers from '../model/answer'
 import Users from '../model/user'
 import MessageLog from '../model/messageLog'
-import * as Behaviour from '../lib/behaviour'
-import * as ANSWERS_ID from '../lib/answersID'
 
 /**
 * Facebook entries point
@@ -58,7 +56,6 @@ export default(server) => {
 
 
         let user = await Users.getUserInfos(senderID)
-        await MessageHandler.updateUserQuestionSpecies(event, user)
         let answer = undefined
         let userInput = undefined
 
