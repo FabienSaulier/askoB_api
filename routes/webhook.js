@@ -28,17 +28,6 @@ export default(server) => {
     }
   })
 
-
-  // check if this is a page subscription
-  function isPageSubscription(data){
-    if (data.object != 'page') {
-      logger.warn('received a non page data: ', data.object)
-      logger.warn('data: ', data)
-      return false
-    }
-    return true
-  }
-
   /**
   * Entry point of users messages
   * */
@@ -59,25 +48,30 @@ export default(server) => {
         const senderID = event.sender.id
         await FacebookApiWrapper.sendMarkSeen(senderID)
         await FacebookApiWrapper.sendTypingOn(senderID)
+
+        // Process User Input
+        const inputType = getInputType(event)
+        logger.info("input: ",inputType)
+
+
         let user = await getUserInfos(senderID)
         await MessageHandler.updateUserQuestionSpecies(event, user)
 
         let answer = undefined
         let userInput = undefined
 
+
+
         // handle postback  Q chien / Q lapin / Assistance p2p
         if(event.postback){
           userInput = event.postback.payload
-
           if(event.postback.payload === 'RESET_P2P'){
             await Users.resetP2P(user)
             event.postback.payload = ANSWERS_ID.ANSWER_MENU_P2P_ID // intro p2p
           }
-
           // refresh user for new informtions
           user = await getUserInfos(senderID)
           logger.info(user)
-
           // cas reprise de weight_loss
           if(user.question_species === 'autres' && user.animals[0] && user.animals[0].id_weigh_loss_answer_step){
             answer = await Answers.findOne({_id:user.animals[0].id_weigh_loss_answer_step})
@@ -86,6 +80,9 @@ export default(server) => {
           }
           MessageHandler.sendAnswer(answer, user)
         }
+
+
+
 
         else if (event.message && event.message.text) { // check if it is an Actual message
           userInput = JSON.stringify(event.message)
@@ -116,12 +113,18 @@ export default(server) => {
           logger.warn("message unknown: ",event);
         }
 
+
+
+
+
         if(user.question_species === 'autres'){
           Users.setIdWeighLossAnswerStep(user, answer._id)
         }
 
         Users.setLastAnswer(user, answer)
         MessageLog.createAndSave(user, userInput, answer)
+
+
 
         FacebookApiWrapper.sendTypingOff(senderID)
       })
@@ -131,6 +134,30 @@ export default(server) => {
     })
 
   })
+}
+
+
+// check if this is a page subscription
+function isPageSubscription(data){
+  if (data.object != 'page') {
+    logger.warn('received a non page data: ', data.object)
+    logger.warn('data: ', data)
+    return false
+  }
+  return true
+}
+
+// return type of the input the user send to Kanzi: text, QR (qr buttons), postback (getstarted, menu)
+function getInputType(event){
+  if(event.postback)
+    return "POSTBACK"
+  else if(event.message.quick_reply)
+    return "QUICK_REPLY"
+  else if(event.message.text)
+    return "TEXT"
+
+  logger.error("input type unknown ",event)
+  return "UNKNOWN"
 }
 
 async function getUserInfos(senderID){
