@@ -80,6 +80,9 @@ const UserSchema = new mongoose.Schema({
   gender: {
     type: String,
   },
+  timezone: {
+    type: String,
+  },
   question_species: {
     type: String,
   },
@@ -91,6 +94,17 @@ const UserSchema = new mongoose.Schema({
   },
   last_answer: { // id last answer returned to the user
     type: Answer.schema,
+  },
+  last_ad_referral: { // cf Facebook User Profile API
+    source: {
+      type: String,
+    },
+    type: {
+      type: String,
+    },
+    ad_id: {
+      type: String
+    },
   },
 })
 
@@ -113,7 +127,8 @@ UserSchema.statics.resetP2P = async function(user) {
 UserSchema.statics.getUserInfos = async function(senderID){
   let user = await Users.getUser(senderID)
   if(!user){
-    user = await FacebookApiWrapper.getUserInfo(senderID)
+    user = await FacebookApiWrapper.getUserInfos(senderID)
+    console.log("user info ",user)
     user.senderID = senderID
     user = await Users.create(user)
   }

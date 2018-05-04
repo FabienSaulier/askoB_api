@@ -89,7 +89,6 @@ export default(server) => {
         }
 
         Users.setLastAnswer(user, answer)
-        MessageLog.createAndSave(user, userInput, answer)
 
 
 

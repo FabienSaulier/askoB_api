@@ -17,11 +17,14 @@ export const MessageLogSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  nlp: { // le bot: chien / chat / lapin
+  nlp: { // le bot: chien / chat / lapin or empty if first time user
+    type: String,
+  },
+  input: {
     type: String,
     required: true,
   },
-  input: {
+  inputType: {
     type: String,
     required: true,
   },
@@ -33,14 +36,19 @@ export const MessageLogSchema = new mongoose.Schema({
   }
 })
 
-MessageLogSchema.statics.createAndSave = async function(user, input, answers) {
+MessageLogSchema.statics.createAndSave = async function(user, input, inputType, answers) {
   let msgLog = new MessageLog()
   msgLog.user_id = user._id
   msgLog.userName = user.first_name+' '+user.last_name
   msgLog.receivedAt = new Date()
   msgLog.nlp = user.question_species
   msgLog.input = input
-  msgLog.answersName = [answers.name]
+  msgLog.inputType = inputType
+  let answersName = []
+  answers.forEach((answer) => {
+    answersName.push(answer.name)
+  })
+  msgLog.answersName = answersName
   msgLog.save()
 }
 

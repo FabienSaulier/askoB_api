@@ -136,7 +136,7 @@ AnswerSchema.statics.findOneRandomByIntent = async function findOneRandomByInten
 }
 
 AnswerSchema.statics.findChooseSpeciesAnswer = async function getStartedAnswer() {
-  return await this.findOne({_id: ANSWERS_ID.ANSWER_GET_STARTED_ID})
+  return [await this.findOne({_id: ANSWERS_ID.ANSWER_GET_STARTED_ID})]
 }
 
 AnswerSchema.statics.findMenuSpecies = async function getStartedAnswer(species) {
@@ -146,6 +146,10 @@ AnswerSchema.statics.findMenuSpecies = async function getStartedAnswer(species) 
     return this.findOne({_id: ANSWERS_ID.ANSWER_MENU_CAT_ID})
   if(species === 'lapin')
     return this.findOne({_id: ANSWERS_ID.ANSWER_MENU_RABBIT_ID})
+}
+
+AnswerSchema.statics.incrementAnswerDisplayCount = function incrementAnswerDisplayCount(answerId) {
+  this.update({_id: answerId}, { $inc: { displayCount: 1} } ).exec()
 }
 
 AnswerSchema.statics.dontUseNLP = {
