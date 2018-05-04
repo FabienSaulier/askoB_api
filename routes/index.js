@@ -5,6 +5,7 @@ import nlp from './nlp'
 import entity from './entity'
 import test from './test'
 import messageLog from './messageLog'
+import user from './user'
 import webhook from './webhook'
 
 // combine routes
@@ -16,5 +17,6 @@ export default(server) => {
   nlp(server)
   entity(server)
   messageLog(server)
+  user(server)
   test(server)
 }
