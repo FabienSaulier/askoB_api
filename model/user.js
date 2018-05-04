@@ -155,6 +155,7 @@ UserSchema.statics.updateUserQuestionSpecies  = async function(answerID, user){
       return Users.updateQuestionSpecies(user, 'autres')
       break
     default:
+      return user
   }
 }
 
