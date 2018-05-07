@@ -9,7 +9,7 @@ export default class FacebookMessage {
   constructor(answer, user) {
 
     // these are attributes name awaited by facebook
-    this.messaging_type: "RESPONSE"
+    this.messaging_type = "RESPONSE"
     this.recipientId = user.senderID
     this.message = {}
     this.message.quick_replies = []
@@ -26,6 +26,9 @@ export default class FacebookMessage {
     if(_.isEmpty(this.message.quick_replies)){ // facebook doesn't accept empty quick_replies
       delete this.message.quick_replies
     }
+
+    console.log("this)")
+    console.log(this)
   }
 
   getMessage() {
