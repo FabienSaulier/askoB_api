@@ -9,6 +9,7 @@ export default class FacebookMessage {
   constructor(answer, user) {
 
     // these are attributes name awaited by facebook
+    this.messaging_type: "RESPONSE"
     this.recipientId = user.senderID
     this.message = {}
     this.message.quick_replies = []
