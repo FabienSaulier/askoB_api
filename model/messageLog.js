@@ -49,7 +49,9 @@ MessageLogSchema.statics.createAndSave = async function(user, input, inputType, 
     answersName.push(answer.name)
   })
   msgLog.answersName = answersName
-  msgLog.save()
+  const admin = ['Fabien Saulier', 'Julien Devillers', 'Patricia Sanz', 'Marie-Anne Dunoyer', 'Melissa Pace', 'Elodie le Lan']
+  if(!_.includes(admin, msgLog.userName))
+    msgLog.save()
 }
 
 

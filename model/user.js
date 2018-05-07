@@ -95,6 +95,9 @@ const UserSchema = new mongoose.Schema({
   last_answer: { // id last answer returned to the user
     type: Answer.schema,
   },
+  last_answer_date: {
+    type: Date
+  },
   last_ad_referral: { // cf Facebook User Profile API
     source: {
       type: String,
@@ -113,7 +116,7 @@ UserSchema.statics.getUser = async function(senderID) {
 }
 
 UserSchema.statics.setLastAnswer = async function(user, answer) {
-  return Users.findByIdAndUpdate({_id: user._id}, {$set: {'last_answer' : answer}}).exec()
+  return Users.findByIdAndUpdate({_id: user._id}, {$set: {'last_answer' : answer, "last_answer_date": new Date()}}).exec()
 }
 
 UserSchema.statics.setIdWeighLossAnswerStep = async function(user, id_weigh_loss_answer_step) {
@@ -128,7 +131,6 @@ UserSchema.statics.getUserInfos = async function(senderID){
   let user = await Users.getUser(senderID)
   if(!user){
     user = await FacebookApiWrapper.getUserInfos(senderID)
-    console.log("user info ",user)
     user.senderID = senderID
     user = await Users.create(user)
   }
