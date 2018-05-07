@@ -26,9 +26,6 @@ export default class FacebookMessage {
     if(_.isEmpty(this.message.quick_replies)){ // facebook doesn't accept empty quick_replies
       delete this.message.quick_replies
     }
-
-    console.log("this)")
-    console.log(this)
   }
 
   getMessage() {
