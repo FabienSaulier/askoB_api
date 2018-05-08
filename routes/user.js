@@ -17,16 +17,23 @@ export default(server) => {
   * get all the messages
   * */
   server.get('/user/search/', async (req, res) => {
+    const { createdAtBegin, createdAtEnd, species, userLastName } = req.query
     console.log(req.query)
-    const users = await Users.find({
-      "createdAt": {
-        $gte: new Date(req.query.createdAtBegin),
-        $lte: new Date(req.query.createdAtEnd),
-        },
-      "question_species" : {
-        $in: req.query.species
+    let dbQuery = {}
+    if(species){
+      dbQuery.question_species = { $in : species}
+    }
+    if(userLastName){
+      dbQuery.last_name = userLastName
+    }
+    if(createdAtBegin && createdAtEnd){
+      dbQuery.createdAt = {
+        $gte: new Date(createdAtBegin),
+        $lte: new Date(createdAtEnd),
       }
-    }).exec()
+    }
+console.log(dbQuery)
+    const users = await Users.find(dbQuery).exec()
     res.send(200, users)
   })
 
