@@ -33,6 +33,9 @@ export const MessageLogSchema = new mongoose.Schema({
   },
   answers_id: {
     type: [mongoose.Schema.Types.ObjectId]
+  },
+  answerIsCorrect: {
+    type: Boolean,
   }
 })
 
