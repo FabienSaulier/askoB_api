@@ -17,11 +17,15 @@ export default(server) => {
   * get all the messages
   * */
   server.get('/user/search/', async (req, res) => {
-    const { createdAtBegin, createdAtEnd, species, userLastName } = req.query
+    let { createdAtBegin, createdAtEnd, species, userLastName } = req.query
     console.log(req.query)
     let dbQuery = {}
     if(species){
-      dbQuery.question_species = { $in : species}
+      if(species[0] === 'aucune'){
+        dbQuery.question_species = {}
+        dbQuery.question_species.$exists = false
+      } else
+        dbQuery.question_species = { $in : species}
     }
     if(userLastName){
       dbQuery.last_name = userLastName
