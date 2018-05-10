@@ -63,19 +63,16 @@ export default(server) => {
         switch (inputType) {
           case "POSTBACK":
             answer = await ProcessPostbackInput.run(event, user)
-            console.log("call fb wrapper ",answer)
             MessageHandler.sendAnswer(answer, user)
             break
 
           case "QUICK_REPLY":
             answer = await ProcessQuickReplyInput.run(event, user)
-            console.log("call fb wrapper ",answer)
             MessageHandler.sendAnswer(answer, user)
             break
 
           case "TEXT":
             answer = await ProcessTextInput.run(event, user)
-            console.log("call fb wrapper ",answer)
             MessageHandler.sendAnswer(answer, user)
             break
 
