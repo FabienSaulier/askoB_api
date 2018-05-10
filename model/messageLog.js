@@ -36,7 +36,10 @@ export const MessageLogSchema = new mongoose.Schema({
   },
   answerIsCorrect: {
     type: Boolean,
-  }
+  },
+  isCorrected: {
+    type: Boolean,
+  },
 })
 
 MessageLogSchema.statics.createAndSave = async function(user, input, inputType, answers) {
@@ -48,10 +51,13 @@ MessageLogSchema.statics.createAndSave = async function(user, input, inputType, 
   msgLog.input = input
   msgLog.inputType = inputType
   let answersName = []
+  let answers_id = []
   answers.forEach((answer) => {
     answersName.push(answer.name)
+    answers_id.push(answer._id)
   })
   msgLog.answersName = answersName
+  msgLog.answers_id = answers_id
   //const admin = ['Fabien Saulier', 'Julien Devillers', 'Patricia Sanz', 'Marie-Anne Dunoyer', 'Melissa Pace', 'Elodie le Lan']
   //if(!_.includes(admin, msgLog.userName))
   msgLog.save()

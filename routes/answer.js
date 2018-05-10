@@ -23,6 +23,17 @@ export default(server) => {
   })
 
   /**
+  * get answers by name
+  * */
+  server.get('/answers/name/', async (req, res) => {
+    const answers = await Answers.find({
+        species: req.query.species,
+        name: { $in: req.query.names}
+    }).exec()
+    res.send(200, answers)
+  })
+
+  /**
   * Delete an answer.
   * */
   server.del('/answer/:id', (req, res, next) => {
