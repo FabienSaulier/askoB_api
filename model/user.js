@@ -98,6 +98,9 @@ const UserSchema = new mongoose.Schema({
   last_answer_date: {
     type: Date
   },
+  labels: {
+    type: String,
+  },
   last_ad_referral: { // cf Facebook User Profile API
     source: {
       type: String,
