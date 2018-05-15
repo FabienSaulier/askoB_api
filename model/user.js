@@ -99,7 +99,7 @@ const UserSchema = new mongoose.Schema({
     type: Date
   },
   labels: {
-    type: String,
+    type: [String],
   },
   last_ad_referral: { // cf Facebook User Profile API
     source: {

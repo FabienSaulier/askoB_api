@@ -14,11 +14,10 @@ export default(server) => {
   })
 
   /**
-  * get all the messages
+  * get specifics users
   * */
   server.get('/user/search/', async (req, res) => {
-    let { createdAtBegin, createdAtEnd, species, userLastName } = req.query
-    console.log(req.query)
+    let { createdAtBegin, createdAtEnd, species, userLastName, label } = req.query
     let dbQuery = {}
     if(species){
       if(species[0] === 'aucune'){
@@ -36,9 +35,22 @@ export default(server) => {
         $lte: new Date(createdAtEnd),
       }
     }
-console.log(dbQuery)
+    if(label){
+      dbQuery.labels = { $all: [label] }
+    }
     const users = await Users.find(dbQuery).exec()
     res.send(200, users)
+  })
+
+  server.patch('users/label/:label_name', async (req, res) => {
+    const labelName = req.params.label_name
+    const usersId = req.body.params.usersId
+    let result
+    if(labelName)
+      result = await Users.updateMany( {_id: { $in: usersId}} , {$push: { labels: labelName} }).exec()
+    else
+      result = await Users.updateMany( {_id: { $in: usersId}} , {$set: { labels: []} }).exec()
+    res.send(200)
   })
 
 }

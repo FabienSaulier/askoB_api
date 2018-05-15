@@ -7,6 +7,7 @@ import test from './test'
 import messageLog from './messageLog'
 import user from './user'
 import webhook from './webhook'
+import label from './label'
 
 // combine routes
 export default(server) => {
@@ -18,5 +19,6 @@ export default(server) => {
   entity(server)
   messageLog(server)
   user(server)
+  label(server)
   test(server)
 }
