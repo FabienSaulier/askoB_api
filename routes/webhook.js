@@ -16,6 +16,9 @@ import MessageLog from '../model/messageLog'
 * */
 export default(server) => {
 
+  const dashbot = require('dashbot')('1NjhQt4ue106pAEHWByzoXHvCy84OVIcaRUVG26s').facebook;
+
+
   /**
   * Method for api validation purpose
   * */
@@ -34,6 +37,7 @@ export default(server) => {
   * */
   server.post('/webhook', (req, res) => {
     const data = req.body
+    dashbot.logIncoming(data)
 
     if(!isPageSubscription(data)) { return }
 
@@ -63,22 +67,18 @@ export default(server) => {
         switch (inputType) {
           case "POSTBACK":
             answer = await ProcessPostbackInput.run(event, user)
-            MessageHandler.sendAnswer(answer, user)
             break
-
           case "QUICK_REPLY":
             answer = await ProcessQuickReplyInput.run(event, user)
-            MessageHandler.sendAnswer(answer, user)
             break
-
           case "TEXT":
             answer = await ProcessTextInput.run(event, user)
-            MessageHandler.sendAnswer(answer, user)
             break
-
           default:
             logger.warn("unknown input type for the event ",event)
         }
+
+        MessageHandler.sendAnswer(answer, user)
 
 
         if(user.question_species === 'autres'){
