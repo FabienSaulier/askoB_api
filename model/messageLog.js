@@ -34,10 +34,12 @@ export const MessageLogSchema = new mongoose.Schema({
   answers_id: {
     type: [mongoose.Schema.Types.ObjectId]
   },
-  answerIsCorrect: {
-    type: Boolean,
+  answerStatus:{
+    type: String,
+    enum: ['CORRECT', 'TO_IMPROVE', 'UNDEFINED', 'USER_EDUCATION', 'FALSE'],
+    default: 'UNDEFINED'
   },
-  isCorrected: {
+  isCorrected: { // is le answerStatus demande une correction
     type: Boolean,
   },
 })
