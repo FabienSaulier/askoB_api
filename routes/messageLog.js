@@ -38,27 +38,16 @@ export default(server) => {
    * update a messageLog Answer Status
    */
   server.put('/message-log/reviewMessageLog/', (req, res, next) => {
-    const {_id, answerStatus} = req.body
+    const {_id, answerStatus, corrected} = req.body
+    console.log(req.body)
     MessageLog.update({_id: _id },
       { $set:
         {
-          'answerStatus': answerStatus
+          'answerStatus': answerStatus,
+          'isCorrected': corrected,
         }
       }).exec()
 
-  })
-
-  /**
-   * update a messageLog isCorrected
-   */
-  server.put('/message-log/corrected/', (req, res, next) => {
-    const {_id, isCorrected} = req.body
-    MessageLog.update({_id: _id },
-      { $set:
-        {
-          'isCorrected': isCorrected
-        }
-      }).exec()
   })
 
 }
