@@ -9,12 +9,18 @@ export default(server) => {
   * get all the messages type TEXT given the request
   * */
   server.get('/message-log/text', async (req, res) => {
-    let { dateOne, dateTwo, species } = req.query
+    let { dateOne, dateTwo, species, statuts } = req.query
     let dbQuery = {}
     dbQuery.inputType = 'TEXT'
 
-    if(species.length > 0)
+    if(species && species.length > 0)
       dbQuery.nlp = { $in : species}
+
+    if(statuts && statuts.length > 0)
+      dbQuery.answerStatus = { $in : statuts}
+    // only return UNDEFINED, can't return other statuts: pb $or and $text query
+    if(statuts.includes('UNDEFINED'))
+      dbQuery.answerStatus = { "$exists" : false }
 
     if(dateOne && dateTwo){
       dbQuery.receivedAt = {
