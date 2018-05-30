@@ -15,7 +15,7 @@ export default(server) => {
       async (result) => {
         const intent = result.intent()
         const entities = Message.getEntities(result)
-        const entitiesValues = await Message.getEntitiesValues(result)
+        const entitiesValues = await Message.getEntitiesValues(result, species)
         const entitiesAndValues = entities.concat(entitiesValues)
         res.send(200, entitiesAndValues)
       },
