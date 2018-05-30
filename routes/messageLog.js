@@ -19,7 +19,7 @@ export default(server) => {
     if(statuts && statuts.length > 0)
       dbQuery.answerStatus = { $in : statuts}
     // only return UNDEFINED, can't return other statuts: pb $or and $text query
-    if(statuts.includes('UNDEFINED'))
+    if(statuts && statuts.includes('UNDEFINED'))
       dbQuery.answerStatus = { "$exists" : false }
 
     if(dateOne && dateTwo){
